@@ -3,6 +3,8 @@ using Datalayer;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
+using Servicelayer.Interfaces;
+using Servicelayer.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +16,9 @@ builder.Services.AddDbContext<BookingContext>(options =>
 			options.UseMySql(Configuration.GetConnectionString("DefaultConnection").ToString(), MariaDbServerVersion.LatestSupportedServerVersion));
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
+builder.Services.AddScoped<ITreatmentRepository, TreatmentRepository>();
+builder.Services.AddScoped<IAvailableRepository, AvailableRepository>();
+builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 
 var app = builder.Build();
 
