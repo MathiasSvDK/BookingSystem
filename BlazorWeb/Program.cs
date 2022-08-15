@@ -1,10 +1,17 @@
 using BlazorWeb.Data;
+using Datalayer;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+var Configuration = builder.Configuration;
+
+builder.Services.AddDbContext<BookingContext>(options =>
+			options.UseMySql(Configuration.GetConnectionString("DefaultConnection").ToString(), MariaDbServerVersion.LatestSupportedServerVersion));
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
