@@ -1,9 +1,24 @@
 ﻿@page "/"
 
-<PageTitle>Index</PageTitle>
+@if (booking != null)
+{
+	@booking.Reason
+}
 
-<h1>Hello, world!</h1>
+@if (employee != null)
+{
+	@employee.Firstname
+}
 
-Welcome to your new app.
+@code {
+	Booking booking { get; set; }
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+	Employee employee { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		booking = await _bookingRepo.GetBookingByBookingId(1);
+
+		employee = await _hospitalRepo.GetEmployeeById(1);
+	}
+}

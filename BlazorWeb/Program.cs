@@ -1,4 +1,3 @@
-using BlazorWeb.Data;
 using Datalayer;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -13,12 +12,17 @@ var builder = WebApplication.CreateBuilder(args);
 var Configuration = builder.Configuration;
 
 builder.Services.AddDbContext<BookingContext>(options =>
-			options.UseMySql(Configuration.GetConnectionString("DefaultConnection").ToString(), MariaDbServerVersion.LatestSupportedServerVersion));
+			options.UseMySql(Configuration.GetConnectionString("BookingConnectionString").ToString(), MariaDbServerVersion.LatestSupportedServerVersion));
+
+builder.Services.AddDbContext<hospitalContext>(options =>
+			options.UseMySql(Configuration.GetConnectionString("HospitalConnectionString").ToString(), Microsoft.EntityFrameworkCore.ServerVersion.Parse("10.3.34-mariadb")));
+
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<ITreatmentRepository, TreatmentRepository>();
 builder.Services.AddScoped<IAvailableRepository, AvailableRepository>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
+builder.Services.AddScoped<IHospitalRepository, HospitalRepository>();
 
 var app = builder.Build();
 

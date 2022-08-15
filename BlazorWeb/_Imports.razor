@@ -8,3 +8,10 @@
 @using Microsoft.JSInterop
 @using BlazorWeb
 @using BlazorWeb.Shared
+@using System.Linq
+
+@using Datalayer.Entities
+@using Servicelayer.Interfaces
+
+@inject IHospitalRepository _hospitalRepo
+@inject IBookingRepository _bookingRepo

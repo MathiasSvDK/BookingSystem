@@ -23,9 +23,9 @@ namespace Servicelayer.Repositories
 			return await _bookingContext.Bookings.Include(t => t.Treatment).Include(a => a.Available).Where(p => p.PatientId == patientId).ToListAsync();
 		}
 
-		public async Task<ICollection<Booking>> GetBookingByBookingId(int bookingId)
+		public async Task<Booking> GetBookingByBookingId(int bookingId)
 		{
-			return await _bookingContext.Bookings.Include(t => t.Treatment).Include(a => a.Available).Where(b => b.BookingId == bookingId).ToListAsync();
+			return await _bookingContext.Bookings.Include(t => t.Treatment).Include(a => a.Available).Where(b => b.BookingId == bookingId).FirstOrDefaultAsync();
 		}
 
 		public async Task<ICollection<Booking>> GetAllBookings()

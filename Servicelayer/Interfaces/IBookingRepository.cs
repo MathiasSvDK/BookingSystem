@@ -7,7 +7,7 @@ namespace Servicelayer.Interfaces
 		Task CreateBooking(Booking booking);
 		Task DeleteBooking(int bookingId);
 		Task<ICollection<Booking>> GetAllBookings();
-		Task<ICollection<Booking>> GetBookingByBookingId(int bookingId);
+		Task<Booking> GetBookingByBookingId(int bookingId);
 		Task<ICollection<Booking>> GetBookingsByPatientId(int patientId);
 		Task UpdateBooking(Booking booking);
 	}

@@ -2,6 +2,7 @@
 using Datalayer.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Servicelayer.Interfaces;
 
 namespace BlazorWeb.Controller
 {
@@ -9,16 +10,30 @@ namespace BlazorWeb.Controller
 	[ApiController]
 	public class BookingController : ControllerBase
 	{
-		private readonly BookingContext _bookingContext;
-		public BookingController(BookingContext bookingContext)
+		private readonly IBookingRepository _bookingRepo;
+		public BookingController(IBookingRepository bookingRepo)
 		{
-			_bookingContext = bookingContext;
+			_bookingRepo = bookingRepo;
 		}
 
-		[HttpGet]
-		public async Task<ActionResult<ICollection<Booking>>> GetBookingsByPatientId(int patientId)
+		[HttpGet("{id}")]
+		public async Task<ICollection<Booking>> GetBookingsByPatientId(int patientId)
 		{
-			return null;
+			return await _bookingRepo.GetBookingsByPatientId(patientId);
 		}
+
+		[HttpPost]
+		public async Task CreateBooking(Booking booking)
+		{
+			await _bookingRepo.CreateBooking(booking);	
+		}
+
+		[HttpPut]
+		public async Task UpdateBooking(Booking booking)
+		{
+			await _bookingRepo.UpdateBooking(booking);
+		}
+
+
 	}
 }
