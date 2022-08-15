@@ -25,7 +25,7 @@ namespace Servicelayer.Repositories
 
 		public async Task<Booking> GetBookingByBookingId(int bookingId)
 		{
-			return await _bookingContext.Bookings.Include(t => t.Treatment).Include(a => a.Available).Where(b => b.BookingId == bookingId).FirstOrDefaultAsync();
+			return await _bookingContext.Bookings.AsNoTracking().Include(t => t.Treatment).Include(a => a.Available).Where(b => b.BookingId == bookingId).FirstOrDefaultAsync();
 		}
 
 		public async Task<ICollection<Booking>> GetAllBookings()

@@ -17,15 +17,15 @@ namespace BlazorWeb.Controller
 		}
 
 		[HttpGet("{id}")]
-		public async Task<ICollection<Booking>> GetBookingsByPatientId(int patientId)
+		public async Task<ICollection<Booking>> GetBookingsByPatientId(int Id)
 		{
-			return await _bookingRepo.GetBookingsByPatientId(patientId);
+			return await _bookingRepo.GetBookingsByPatientId(Id);
 		}
 
 		[HttpPost]
 		public async Task CreateBooking(Booking booking)
 		{
-			await _bookingRepo.CreateBooking(booking);	
+			await _bookingRepo.CreateBooking(booking);
 		}
 
 		[HttpPut]
@@ -34,6 +34,10 @@ namespace BlazorWeb.Controller
 			await _bookingRepo.UpdateBooking(booking);
 		}
 
-
+		[HttpDelete("{id}")]
+		public async Task DeleteBooking(int Id)
+		{
+			await _bookingRepo.DeleteBooking(Id);
+		}
 	}
 }
