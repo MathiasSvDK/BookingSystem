@@ -27,13 +27,13 @@ namespace Servicelayer.Repositories
 
 		public async Task<Booking> GetBookingByBookingId(int bookingId)
 		{
-			return await _bookingContext.Bookings.AsNoTracking().Include(t => t.Treatment).Include(a => a.Available).Where(b => b.BookingId == bookingId).FirstOrDefaultAsync();
+			return await _bookingContext.Bookings.AsNoTracking().Include(t => t.Treatment).AsNoTracking().Include(a => a.Available).AsNoTracking().Where(b => b.BookingId == bookingId).FirstOrDefaultAsync();
 		}
 
 		public async Task<ICollection<Booking>> GetAllBookings()
 		{
 			int year = DateTime.UtcNow.Year;
-			return await _bookingContext.Bookings.Include(t => t.Treatment).Include(a => a.Available).Where(d => d.Available.Date.Year == year).ToListAsync();
+			return await _bookingContext.Bookings.Include(t => t.Treatment).AsNoTracking().Include(a => a.Available).AsNoTracking().Where(d => d.Available.Date.Year == year).ToListAsync();
 		}
 
 		public async Task CreateBooking(Booking booking)
@@ -48,9 +48,8 @@ namespace Servicelayer.Repositories
 			Booking booking = await GetBookingByBookingId(updateBooking.BookingId);
 			if (updateBooking.AvailableId != booking.AvailableId)
 			{
-				await UpdateAvailable(booking.AvailableId, booking.Available.IsTaken.ToString().ToLower());
+				await UpdateAvailable(booking.AvailableId, "true");
 				await UpdateAvailable(updateBooking.AvailableId, "false");
-
 			}
 			_bookingContext.Bookings.Update(updateBooking);
 			await _bookingContext.SaveChangesAsync();
@@ -61,10 +60,11 @@ namespace Servicelayer.Repositories
 			Booking booking = await GetBookingByBookingId(bookingId);
 			if (booking != null)
 			{
-				await UpdateAvailable(booking.AvailableId, booking.Available.IsTaken.ToString().ToLower());
-				_bookingContext.Bookings.Remove(booking);
-				await _bookingContext.SaveChangesAsync();
+				booking.Available.IsTaken = false;
+				await _availableRepo.UpdateAvailable(booking.Available);
 			}
+			_bookingContext.Bookings.Remove(booking);
+			await _bookingContext.SaveChangesAsync();
 		}
 
 		private async Task UpdateAvailable(int id, string isTaken)

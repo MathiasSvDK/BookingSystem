@@ -27,7 +27,7 @@ namespace BlazorWeb.Controller
 		[HttpGet]
 		public async Task<ICollection<Available>> GetAllAvailable()
 		{
-			return await _availableRepo.GetAllAvailables();
+			return  _availableRepo.GetAllAvailables().ToList();
 		}
 
 		[HttpPost]

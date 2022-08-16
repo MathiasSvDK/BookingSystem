@@ -18,9 +18,9 @@ namespace Servicelayer.Repositories
 			_bookingContext = bookingContext;
 		}
 
-		public async Task<ICollection<Available>> GetAllAvailables()
+		public IQueryable<Available> GetAllAvailables()
 		{
-			return await _bookingContext.Availables.ToListAsync();
+			return _bookingContext.Availables.Where(t => t.IsTaken == false);
 		}
 
 		public async Task<Available> GetAvailableById(int availableId)
@@ -42,7 +42,7 @@ namespace Servicelayer.Repositories
 
 		public async Task DeleteAvailable(int availableId)
 		{
-			Available available = await _bookingContext.Availables.Where(a => a.AvailableId == availableId).FirstOrDefaultAsync();
+			Available available = await GetAvailableById(availableId);
 			_bookingContext.Availables.Remove(available);
 			await _bookingContext.SaveChangesAsync();
 		}

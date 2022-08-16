@@ -1,5 +1,23 @@
-﻿<h3>CreateBooking</h3>
+﻿@page "/createbooking"
+@inject NavigationManager NavigationManager
+
+<EditForm Model="booking" OnValidSubmit="HandleValidSubmit">
+	<DataAnnotationsValidator />
+
+</EditForm>
 
 @code {
+	public Booking booking = new Booking();
 
+	public List<Available> availables = new List<Available>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		availables = _availableRepo.GetAllAvailables().ToList();
+	}
+
+	public async Task HandleValidSubmit()
+	{
+		
+	}
 }

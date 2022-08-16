@@ -6,7 +6,7 @@ namespace Servicelayer.Interfaces
 	{
 		Task CreateAvailable(Available available);
 		Task DeleteAvailable(int availableId);
-		Task<ICollection<Available>> GetAllAvailables();
+		IQueryable<Available> GetAllAvailables();
 		Task<Available> GetAvailableById(int availableId);
 		Task UpdateAvailable(Available available);
 	}
