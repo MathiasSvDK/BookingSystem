@@ -38,7 +38,7 @@ namespace Servicelayer.Repositories
 
 		public async Task CreateBooking(Booking booking)
 		{
-			await UpdateAvailable(booking.AvailableId, "false");
+			//await UpdateAvailable(booking.AvailableId, "false");
 			_bookingContext.Bookings.Add(booking);
 			await _bookingContext.SaveChangesAsync();
 		}

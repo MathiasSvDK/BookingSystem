@@ -3,6 +3,51 @@
 
 <EditForm Model="booking" OnValidSubmit="HandleValidSubmit">
 	<DataAnnotationsValidator />
+	<h4>Opret en Booking</h4>
+	<hr />
+	<ValidationMessage For="@(() => booking.PatientId)" />
+	<label class="control-label">Patient</label>
+	<input placeholder="Fornavn" class="form-control" @bind-value="booking.PatientId" />
+
+	<ValidationMessage For="@(() => booking.TreatmentId)" />
+	<label class="control-label">Behandling</label>
+	<select class="form-control" required @bind="booking.TreatmentId">
+		<option value="">Vælg Behandling</option>
+		@if (treatments == null)
+		{
+			<option>Loading..</option>
+		}
+		else
+		{
+			@foreach (var treatment in treatments)
+			{
+				<option value="@treatment.TreatmentId">@treatment.TreatmentName</option>
+			}
+		}
+	</select>
+
+	<ValidationMessage For="@(() => booking.Reason)" />
+	<label class="control-label">Begrundelse for behandling</label>
+	<input placeholder="Fornavn" class="form-control" @bind-value="booking.Reason" />
+
+	<ValidationMessage For="@(() => booking.AvailableId)" />
+	<label class="control-label">Gruppe</label>
+	<select class="form-control" required @bind="booking.AvailableId">
+		<option value="">Vælg en gruppe</option>
+		@if (availables == null)
+		{
+			<option>Loading..</option>
+		}
+		else
+		{
+			@foreach (var available in availables)
+			{
+				<option value="@available.AvailableId">@available.Date</option>
+			}
+		}
+	</select>
+
+	<button class="btn btn-success">Opret</button>
 
 </EditForm>
 
@@ -11,13 +56,21 @@
 
 	public List<Available> availables = new List<Available>();
 
+	public List<Treatment> treatments = new List<Treatment>();
+
 	protected override async Task OnInitializedAsync()
 	{
 		availables = _availableRepo.GetAllAvailables().ToList();
+		treatments = _treatmentRepo.GetAllTreatments().ToList();
 	}
 
 	public async Task HandleValidSubmit()
 	{
-		
+		await _bookingRepo.CreateBooking(booking);
+
+
+		Available available = availables.Where(a => a.AvailableId == booking.AvailableId).FirstOrDefault();
+		available.IsTaken = true;
+		await _availableRepo.UpdateAvailable(available);
 	}
 }

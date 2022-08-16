@@ -52,6 +52,8 @@ namespace BlazorWeb.Controller
 			Available available = await _availableRepo.GetAvailableById(booking.AvailableId);
 			if (available.IsTaken == false)
 			{
+				available.IsTaken = true;
+				await _availableRepo.UpdateAvailable(available);
 				await _bookingRepo.CreateBooking(booking);
 			}
 		}
