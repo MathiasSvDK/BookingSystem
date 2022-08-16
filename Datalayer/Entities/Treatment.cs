@@ -11,6 +11,6 @@ namespace Datalayer.Entities
 		public int TreatmentId { get; set; }
 		public string TreatmentName { get; set; }
 
-		public ICollection<Booking> Bookings { get; set; }
+		public ICollection<Booking>? Bookings { get; set; }
 	}
 }

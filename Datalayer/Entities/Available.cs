@@ -12,6 +12,6 @@ namespace Datalayer.Entities
         public DateTime Date { get; set; }
         public bool IsTaken { get; set; }
 
-        public Booking Booking { get; set; }
+        public Booking? Booking { get; set; }
     }
 }

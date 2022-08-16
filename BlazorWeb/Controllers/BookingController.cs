@@ -11,9 +11,11 @@ namespace BlazorWeb.Controller
 	public class BookingController : ControllerBase
 	{
 		private readonly IBookingRepository _bookingRepo;
-		public BookingController(IBookingRepository bookingRepo)
+		private readonly IAvailableRepository _availableRepo;
+		public BookingController(IBookingRepository bookingRepo, IAvailableRepository availableRepo)
 		{
 			_bookingRepo = bookingRepo;
+			_availableRepo = availableRepo;
 		}
 
 		[HttpGet("{id}")]
@@ -22,16 +24,31 @@ namespace BlazorWeb.Controller
 			return await _bookingRepo.GetBookingsByPatientId(Id);
 		}
 
+		[HttpGet]
+		public async Task<ICollection<Available>> GetAllAvailable()
+		{
+			return await _availableRepo.GetAllAvailables();
+		}
+
 		[HttpPost]
 		public async Task CreateBooking(Booking booking)
 		{
-			await _bookingRepo.CreateBooking(booking);
+			Available available = await _availableRepo.GetAvailableById(booking.AvailableId);
+			if (available.IsTaken == false)
+			{
+				await _bookingRepo.CreateBooking(booking);
+			}
 		}
+
 
 		[HttpPut]
 		public async Task UpdateBooking(Booking booking)
 		{
-			await _bookingRepo.UpdateBooking(booking);
+			Available available = await _availableRepo.GetAvailableById(booking.AvailableId);
+			if (available.IsTaken == false)
+			{
+				await _bookingRepo.UpdateBooking(booking);
+			}
 		}
 
 		[HttpDelete("{id}")]

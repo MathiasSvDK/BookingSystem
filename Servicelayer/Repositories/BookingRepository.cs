@@ -13,9 +13,11 @@ namespace Servicelayer.Repositories
 	public class BookingRepository : IBookingRepository
 	{
 		private readonly BookingContext _bookingContext;
-		public BookingRepository(BookingContext bookingContext)
+		private readonly IAvailableRepository _availableRepo;
+		public BookingRepository(BookingContext bookingContext, IAvailableRepository availableRepository)
 		{
 			_bookingContext = bookingContext;
+			_availableRepo = availableRepository;
 		}
 
 		public async Task<ICollection<Booking>> GetBookingsByPatientId(int patientId)
@@ -36,22 +38,51 @@ namespace Servicelayer.Repositories
 
 		public async Task CreateBooking(Booking booking)
 		{
+			await UpdateAvailable(booking.AvailableId, "false");
 			_bookingContext.Bookings.Add(booking);
 			await _bookingContext.SaveChangesAsync();
 		}
 
-		public async Task UpdateBooking(Booking booking)
+		public async Task UpdateBooking(Booking updateBooking)
 		{
-			_bookingContext.Bookings.Update(booking);
+			Booking booking = await GetBookingByBookingId(updateBooking.BookingId);
+			if (updateBooking.AvailableId != booking.AvailableId)
+			{
+				await UpdateAvailable(booking.AvailableId, booking.Available.IsTaken.ToString().ToLower());
+				await UpdateAvailable(updateBooking.AvailableId, "false");
+
+			}
+			_bookingContext.Bookings.Update(updateBooking);
 			await _bookingContext.SaveChangesAsync();
 		}
 
 		public async Task DeleteBooking(int bookingId)
 		{
-			Booking booking = await _bookingContext.Bookings.Where(b => b.BookingId == bookingId).FirstOrDefaultAsync();
-			_bookingContext.Bookings.Remove(booking);
-			await _bookingContext.SaveChangesAsync();
+			Booking booking = await GetBookingByBookingId(bookingId);
+			if (booking != null)
+			{
+				await UpdateAvailable(booking.AvailableId, booking.Available.IsTaken.ToString().ToLower());
+				_bookingContext.Bookings.Remove(booking);
+				await _bookingContext.SaveChangesAsync();
+			}
 		}
 
+		private async Task UpdateAvailable(int id, string isTaken)
+		{
+			Available available = await _availableRepo.GetAvailableById(id);
+			switch (isTaken)
+			{
+				case "true":
+					available.IsTaken = false;
+					await _availableRepo.UpdateAvailable(available);
+					break;
+				case "false":
+					available.IsTaken = true;
+					await _availableRepo.UpdateAvailable(available);
+					break;
+				default:
+					break;
+			}
+		}
 	}
 }

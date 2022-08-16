@@ -25,7 +25,7 @@ namespace Servicelayer.Repositories
 
 		public async Task<Available> GetAvailableById(int availableId)
 		{
-			return await _bookingContext.Availables.Where(a => a.AvailableId == availableId).FirstOrDefaultAsync();
+			return await _bookingContext.Availables.AsNoTracking().Where(a => a.AvailableId == availableId).FirstOrDefaultAsync();
 		}
 
 		public async Task CreateAvailable(Available available)
