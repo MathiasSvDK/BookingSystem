@@ -12,22 +12,38 @@ namespace BlazorWeb.Controller
 	{
 		private readonly IBookingRepository _bookingRepo;
 		private readonly IAvailableRepository _availableRepo;
-		public BookingController(IBookingRepository bookingRepo, IAvailableRepository availableRepo)
-		{
-			_bookingRepo = bookingRepo;
-			_availableRepo = availableRepo;
-		}
+		private readonly ITreatmentRepository _treatmentRepo;
+		public BookingController(IBookingRepository bookingRepo, IAvailableRepository availableRepo, ITreatmentRepository treatmentRepo)
+        {
+            _bookingRepo = bookingRepo;
+            _availableRepo = availableRepo;
+            _treatmentRepo = treatmentRepo;
+        }
 
-		[HttpGet("{id}")]
+        [HttpGet("{id}")]
 		public async Task<ICollection<Booking>> GetBookingsByPatientId(int Id)
 		{
-			return await _bookingRepo.GetBookingsByPatientId(Id);
+			return _bookingRepo.GetBookingsByPatientId(Id).ToList();
 		}
 
 		[HttpGet]
-		public async Task<ICollection<Available>> GetAllAvailable()
+		public async Task<ICollection<Booking>> GetAllBookings()
 		{
-			return  _availableRepo.GetAllAvailables().ToList();
+			return _bookingRepo.GetAllBookings().ToList();
+		}
+
+		[Route("available")]
+		[HttpGet]
+		public async Task<ICollection<Available>> GetAllAvailables()
+		{
+			return _availableRepo.GetAllAvailables().ToList();
+		}
+
+		[Route("treatment")]
+		[HttpGet]
+		public async Task<ICollection<Treatment>> GetAllTreatments()
+		{
+			return _treatmentRepo.GetAllTreatments().ToList();
 		}
 
 		[HttpPost]

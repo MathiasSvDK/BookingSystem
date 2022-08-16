@@ -6,7 +6,7 @@ namespace Servicelayer.Interfaces
 	{
 		Task CreateTreatment(Treatment treatment);
 		Task DeleteTreatment(int treatmentId);
-		Task<ICollection<Treatment>> GetAllTreatments();
+		IQueryable<Treatment> GetAllTreatments();
 		Task<Treatment> GetTreatmentsById(int treatmentId);
 		Task UpdateTreatment(Treatment treatment);
 	}

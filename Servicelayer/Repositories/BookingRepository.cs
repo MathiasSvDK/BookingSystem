@@ -20,9 +20,9 @@ namespace Servicelayer.Repositories
 			_availableRepo = availableRepository;
 		}
 
-		public async Task<ICollection<Booking>> GetBookingsByPatientId(int patientId)
+		public IQueryable<Booking> GetBookingsByPatientId(int patientId)
 		{
-			return await _bookingContext.Bookings.Include(t => t.Treatment).Include(a => a.Available).Where(p => p.PatientId == patientId).ToListAsync();
+			return _bookingContext.Bookings.Include(t => t.Treatment).Include(a => a.Available).Where(p => p.PatientId == patientId);
 		}
 
 		public async Task<Booking> GetBookingByBookingId(int bookingId)
@@ -30,10 +30,10 @@ namespace Servicelayer.Repositories
 			return await _bookingContext.Bookings.AsNoTracking().Include(t => t.Treatment).AsNoTracking().Include(a => a.Available).AsNoTracking().Where(b => b.BookingId == bookingId).FirstOrDefaultAsync();
 		}
 
-		public async Task<ICollection<Booking>> GetAllBookings()
+		public IQueryable<Booking> GetAllBookings()
 		{
 			int year = DateTime.UtcNow.Year;
-			return await _bookingContext.Bookings.Include(t => t.Treatment).AsNoTracking().Include(a => a.Available).AsNoTracking().Where(d => d.Available.Date.Year == year).ToListAsync();
+			return _bookingContext.Bookings.Include(t => t.Treatment).AsNoTracking().Include(a => a.Available).AsNoTracking().Where(d => d.Available.Date.Year == year);
 		}
 
 		public async Task CreateBooking(Booking booking)

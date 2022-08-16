@@ -28,14 +28,16 @@ namespace Servicelayer.Repositories
 			return await _hospitalContext.Employees.FirstOrDefaultAsync(e => e.Id == employeeId);
 		}
 
-		public async Task<ICollection<Patient>> GetAllPatients()
+		public IQueryable<Patient> GetAllPatients()
 		{
-			return await _hospitalContext.Patients.ToListAsync();
+			return _hospitalContext.Patients;
 		}
 
-		public async Task<ICollection<Employee>> GetAllEmployees()
+		public IQueryable<Employee> GetAllEmployees()
 		{
-			return await _hospitalContext.Employees.ToListAsync();
+			return _hospitalContext.Employees;
 		}
+
+
 	}
 }

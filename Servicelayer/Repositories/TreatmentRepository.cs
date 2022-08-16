@@ -18,9 +18,9 @@ namespace Servicelayer.Repositories
 			_bookingContext = bookingContext;
 		}
 
-		public async Task<ICollection<Treatment>> GetAllTreatments()
+		public IQueryable<Treatment> GetAllTreatments()
 		{
-			return await _bookingContext.Treatments.ToListAsync();
+			return _bookingContext.Treatments;
 		}
 
 		public async Task<Treatment> GetTreatmentsById(int treatmentId)
