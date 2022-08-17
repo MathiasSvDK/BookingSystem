@@ -48,6 +48,7 @@
 	</select>
 
 	<button class="btn btn-success">Opret</button>
+	<a href="/" class="btn btn-secondary">Annuller</a>
 
 </EditForm>
 
@@ -72,5 +73,9 @@
 		Available available = availables.Where(a => a.AvailableId == booking.AvailableId).FirstOrDefault();
 		available.IsTaken = true;
 		await _availableRepo.UpdateAvailable(available);
+
+		StateHasChanged();
+
+		NavigationManager.NavigateTo("/");
 	}
 }

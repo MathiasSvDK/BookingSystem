@@ -1,5 +1,42 @@
-﻿<h3>EditTreatment</h3>
+﻿@page "/edittreatment/{treatmentId:int}"
+@inject NavigationManager NavigationManager
+
+@inject NavigationManager NavigationManager
+
+<EditForm Model="@treatment" OnValidSubmit="HandleValidSubmit">
+	<DataAnnotationsValidator />
+	<h4>Opret en behandling</h4>
+	<hr />
+	<ValidationMessage For="@(() => treatment.TreatmentName)" />
+	<label class="control-label">Patient</label>
+	<input placeholder="Fornavn" class="form-control" @bind-value="treatment.TreatmentName" />
+
+	<ValidationMessage For="@(() => treatment.TreatmentName)" />
+	<label class="control-label">Patient</label>
+	<input placeholder="Fornavn" class="form-control" @bind-value="treatment.Description" />
+
+	<button class="btn btn-success">Gem</button>
+	<a href="/" class="btn btn-secondary">Annuller</a>
+
+</EditForm>
 
 @code {
+	[Parameter]
+	public int treatmentId { get; set; }
 
+	Treatment treatment = new Treatment();
+
+	protected override async Task OnInitializedAsync()
+	{
+		treatment = await _treatmentRepo.GetTreatmentsById(treatmentId);
+	}
+
+	public async Task HandleValidSubmit()
+	{
+		await _treatmentRepo.UpdateTreatment(treatment);
+
+		StateHasChanged();
+
+		NavigationManager.NavigateTo("/");
+	}
 }

@@ -1,5 +1,34 @@
-﻿<h3>CreateTreatment</h3>
+﻿@page "/createteatment"
+@inject NavigationManager NavigationManager
+
+@inject NavigationManager NavigationManager
+
+<EditForm Model="@treatment" OnValidSubmit="HandleValidSubmit">
+	<DataAnnotationsValidator />
+	<h4>Opret en behandling</h4>
+	<hr />
+	<ValidationMessage For="@(() => treatment.TreatmentName)" />
+	<label class="control-label">Patient</label>
+	<input placeholder="Fornavn" class="form-control" @bind-value="treatment.TreatmentName" />
+
+	<ValidationMessage For="@(() => treatment.TreatmentName)" />
+	<label class="control-label">Patient</label>
+	<input placeholder="Fornavn" class="form-control" @bind-value="treatment.Description" />
+
+	<button class="btn btn-success">Opret</button>
+	<a href="/" class="btn btn-secondary">Annuller</a>
+
+</EditForm>
 
 @code {
+	Treatment treatment = new Treatment();
 
+	public async Task HandleValidSubmit()
+	{
+		await _treatmentRepo.CreateTreatment(treatment);
+
+		StateHasChanged();
+
+		NavigationManager.NavigateTo("/");
+	}
 }

@@ -19,7 +19,7 @@ namespace Datalayer
 			base.OnModelCreating(modelBuilder);
 
 			modelBuilder.Entity<Treatment>().HasData(
-			   new Treatment { TreatmentId = 1, TreatmentName = "Test" }
+			   new Treatment { TreatmentId = 1, TreatmentName = "Blodprøve", Description = "Blodprøver er blod udtaget fra en vene, som er de blodårer, der fører tilbage til hjertet. Blodet kan undersøges for sammensætning af salte, enzymer og proteiner, og i et vist omfang genetisk materiale. " }
 			   );
 
 			modelBuilder.Entity<Available>().HasData(
