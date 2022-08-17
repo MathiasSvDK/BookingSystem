@@ -5,9 +5,9 @@ VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorWeb", "BlazorWeb\BlazorWeb.csproj", "{133C8578-FE6C-406E-927B-6C989613FB14}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Datalayer", "Datalayer\Datalayer.csproj", "{79CD06C6-5A77-4F82-8546-5EB7C262ABDB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Datalayer", "Datalayer\Datalayer.csproj", "{79CD06C6-5A77-4F82-8546-5EB7C262ABDB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Servicelayer", "Servicelayer\Servicelayer.csproj", "{A986AD82-B68E-47C7-BECB-548ABA479996}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Servicelayer", "Servicelayer\Servicelayer.csproj", "{A986AD82-B68E-47C7-BECB-548ABA479996}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
