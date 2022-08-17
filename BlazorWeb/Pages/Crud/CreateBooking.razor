@@ -1,7 +1,7 @@
 ﻿@page "/createbooking"
 @inject NavigationManager NavigationManager
 
-<EditForm Model="booking" OnValidSubmit="HandleValidSubmit">
+<EditForm Model="@booking" OnValidSubmit="HandleValidSubmit">
 	<DataAnnotationsValidator />
 	<h4>Opret en Booking</h4>
 	<hr />
@@ -31,9 +31,9 @@
 	<input placeholder="Fornavn" class="form-control" @bind-value="booking.Reason" />
 
 	<ValidationMessage For="@(() => booking.AvailableId)" />
-	<label class="control-label">Gruppe</label>
+	<label class="control-label">Tid</label>
 	<select class="form-control" required @bind="booking.AvailableId">
-		<option value="">Vælg en gruppe</option>
+		<option value="">Vælg en Tid</option>
 		@if (availables == null)
 		{
 			<option>Loading..</option>

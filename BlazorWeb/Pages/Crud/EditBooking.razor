@@ -1,5 +1,99 @@
-﻿<h3>EditBooking</h3>
+﻿@page "/editbooking/{bookingId:int}"
+@inject NavigationManager NavigationManager
+
+@if (booking != null)
+{
+	<EditForm Model="@booking" OnValidSubmit="HandleValidSubmit">
+		<DataAnnotationsValidator />
+		<h4>ændre booking</h4>
+		<hr />
+
+		<ValidationMessage For="@(() => booking.PatientId)" />
+		<label class="control-label">Patient</label>
+		<input placeholder="Fornavn" class="form-control" @bind-value="booking.PatientId" />
+
+		<ValidationMessage For="@(() => booking.TreatmentId)" />
+		<label class="control-label">Behandling</label>
+		<select class="form-control" required @bind="booking.TreatmentId">
+			<option value="">Vælg Behandling</option>
+			@if (treatments == null)
+			{
+				<option>Loading..</option>
+			}
+			else
+			{
+				@foreach (var treatment in treatments)
+				{
+					<option value="@treatment.TreatmentId">@treatment.TreatmentName</option>
+				}
+			}
+		</select>
+
+		<ValidationMessage For="@(() => booking.Reason)" />
+		<label class="control-label">Begrundelse for behandling</label>
+		<input placeholder="Fornavn" class="form-control" @bind-value="booking.Reason" />
+
+		<ValidationMessage For="@(() => booking.AvailableId)" />
+		<label class="control-label">Tid</label>
+		<select class="form-control" @bind="booking.AvailableId">
+			<option value="">Vælg en Tid</option>
+			@if (availables == null)
+			{
+				<option>Loading..</option>
+			}
+			else
+			{
+				@foreach (var available in availables)
+				{
+					<option value="@available.AvailableId">@available.Date</option>
+				}
+			}
+		</select>
+
+		<button class="btn btn-success">Gem</button>
+
+	</EditForm>
+}
+
 
 @code {
+	[Parameter]
+	public int bookingId { get; set; }
 
+	private Booking booking;
+
+	private List<Available> availables = new List<Available>();
+
+	private List<Treatment> treatments = new List<Treatment>();
+
+	Available oldAvailable;
+
+	protected override async Task OnInitializedAsync()
+	{
+		booking = await _bookingRepo.GetBookingByBookingId(bookingId);
+		availables = _availableRepo.GetAllAvailables().ToList();
+		treatments = _treatmentRepo.GetAllTreatments().ToList();
+		oldAvailable = booking.Available;
+	}
+
+	public async Task HandleValidSubmit()
+	{
+		Available available = availables.Where(a => a.AvailableId == booking.AvailableId).FirstOrDefault();
+
+
+		if (oldAvailable.AvailableId != available.AvailableId)
+		{
+			oldAvailable.IsTaken = false;
+			await _availableRepo.UpdateAvailable(oldAvailable);
+			available.IsTaken = true;
+			await _availableRepo.UpdateAvailable(available);
+
+			booking.Available = available;
+		}
+
+		await _bookingRepo.UpdateBooking(booking);
+		StateHasChanged();
+
+		NavigationManager.NavigateTo("/");
+	}
 }

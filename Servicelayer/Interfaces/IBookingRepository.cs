@@ -10,5 +10,6 @@ namespace Servicelayer.Interfaces
 		Task<Booking> GetBookingByBookingId(int bookingId);
 		IQueryable<Booking> GetBookingsByPatientId(int patientId);
 		Task UpdateBooking(Booking booking);
+		Task UpdateBookingForApi(Booking booking);
 	}
 }

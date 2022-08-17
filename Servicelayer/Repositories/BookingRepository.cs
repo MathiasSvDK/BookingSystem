@@ -38,18 +38,35 @@ namespace Servicelayer.Repositories
 
 		public async Task CreateBooking(Booking booking)
 		{
-			//await UpdateAvailable(booking.AvailableId, "false");
 			_bookingContext.Bookings.Add(booking);
 			await _bookingContext.SaveChangesAsync();
 		}
 
-		public async Task UpdateBooking(Booking updateBooking)
+		public async Task UpdateBooking(Booking booking)
+		{
+			_bookingContext.Bookings.Update(booking);
+			await _bookingContext.SaveChangesAsync();
+		}
+
+		public async Task UpdateBookingForApi(Booking updateBooking)
 		{
 			Booking booking = await GetBookingByBookingId(updateBooking.BookingId);
+
 			if (updateBooking.AvailableId != booking.AvailableId)
 			{
-				await UpdateAvailable(booking.AvailableId, "true");
-				await UpdateAvailable(updateBooking.AvailableId, "false");
+				updateBooking.Available = await _availableRepo.GetAvailableById(updateBooking.AvailableId);
+
+				if (updateBooking.Available.IsTaken == false)
+				{
+					await UpdateAvailable(booking.AvailableId, "true");
+					updateBooking.Available.IsTaken = true;
+					await _availableRepo.UpdateAvailable(updateBooking.Available);
+				}
+				else
+				{
+					
+					updateBooking.Available = booking.Available;
+				}
 			}
 			_bookingContext.Bookings.Update(updateBooking);
 			await _bookingContext.SaveChangesAsync();
