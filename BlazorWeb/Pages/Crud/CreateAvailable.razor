@@ -1,5 +1,29 @@
-﻿<h3>CreateAvailable</h3>
+﻿@page "/createavailable"
+@inject NavigationManager NavigationManager
+
+
+<EditForm Model="@available" OnValidSubmit="HandleValidSubmit">
+	<DataAnnotationsValidator />
+	<h4>Opret en Tid</h4>
+	<hr />
+	<ValidationMessage For="@(() => available.Date)" />
+	<label class="control-label">Dato</label>
+	<input type="datetime" class="form-control" @bind-value="available.Date" />
+
+	<button class="btn btn-success">Opret</button>
+	<a href="/" class="btn btn-secondary">Annuller</a>
+
+</EditForm>
 
 @code {
+	Available available = new Available();
 
+	public async Task HandleValidSubmit()
+	{
+		await _availableRepo.CreateAvailable(available);
+
+		StateHasChanged();
+
+		NavigationManager.NavigateTo("/");
+	}
 }

@@ -1,5 +1,37 @@
-﻿<h3>EditAvailable</h3>
+﻿@page "/editavailable/{availableId:int}"
+@inject NavigationManager NavigationManager
+
+
+<EditForm Model="@available" OnValidSubmit="HandleValidSubmit">
+	<DataAnnotationsValidator />
+	<h4>Ændre tiden</h4>
+	<hr />
+	<ValidationMessage For="@(() => available.Date)" />
+	<label class="control-label">Dato</label>
+	<input type="datetime" class="form-control" @bind-value="available.Date" />
+
+	<button class="btn btn-success">Gem</button>
+	<a href="/" class="btn btn-secondary">Annuller</a>
+
+</EditForm>
 
 @code {
+	[Parameter]
+	public int availableId { get; set; }
 
+	Available available = new Available();
+
+	protected override async Task OnInitializedAsync()
+	{
+		available = await _availableRepo.GetAvailableById(availableId);
+	}
+
+	public async Task HandleValidSubmit()
+	{
+		await _availableRepo.UpdateAvailable(available);
+
+		StateHasChanged();
+
+		NavigationManager.NavigateTo("/");
+	}
 }
