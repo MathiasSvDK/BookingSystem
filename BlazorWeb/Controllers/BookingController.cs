@@ -36,7 +36,7 @@ namespace BlazorWeb.Controller
 		[HttpGet]
 		public async Task<ICollection<Available>> GetAllAvailables()
 		{
-			return _availableRepo.GetAllAvailables().ToList();
+			return _availableRepo.GetAllAvailablesNotTaken().ToList();
 		}
 
 		[Route("treatment")]

@@ -33,7 +33,7 @@ namespace Servicelayer.Repositories
 		public IQueryable<Booking> GetAllBookings()
 		{
 			int year = DateTime.UtcNow.Year;
-			return _bookingContext.Bookings.Include(t => t.Treatment).AsNoTracking().Include(a => a.Available).AsNoTracking().Where(d => d.Available.Date.Year == year);
+			return _bookingContext.Bookings.Include(t => t.Treatment).AsNoTracking().Include(a => a.Available).AsNoTracking().Where(d => d.Available.Date.Year >= year);
 		}
 
 		public async Task CreateBooking(Booking booking)

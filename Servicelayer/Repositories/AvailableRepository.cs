@@ -20,7 +20,12 @@ namespace Servicelayer.Repositories
 
 		public IQueryable<Available> GetAllAvailables()
 		{
-			return _bookingContext.Availables.Where(t => t.IsTaken == false);
+			return _bookingContext.Availables.OrderBy(d => d.Date);
+		}
+
+		public IQueryable<Available> GetAllAvailablesNotTaken()
+		{
+			return _bookingContext.Availables.Where(t => t.IsTaken == false).OrderBy(d => d.Date);
 		}
 
 		public async Task<Available> GetAvailableById(int availableId)

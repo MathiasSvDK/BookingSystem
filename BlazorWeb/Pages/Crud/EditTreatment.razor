@@ -4,15 +4,15 @@
 
 <EditForm Model="@treatment" OnValidSubmit="HandleValidSubmit">
 	<DataAnnotationsValidator />
-	<h4>Opret en behandling</h4>
+	<h4>Redigere @treatment.TreatmentName</h4>
 	<hr />
 	<ValidationMessage For="@(() => treatment.TreatmentName)" />
-	<label class="control-label">Patient</label>
-	<input placeholder="Fornavn" class="form-control" @bind-value="treatment.TreatmentName" />
+	<label class="control-label">Behandling</label>
+	<input placeholder="f. eks blodprøve" class="form-control" @bind-value="treatment.TreatmentName" />
 
 	<ValidationMessage For="@(() => treatment.TreatmentName)" />
-	<label class="control-label">Patient</label>
-	<input placeholder="Fornavn" class="form-control" @bind-value="treatment.Description" />
+	<label class="control-label">Beskrivelse</label>
+	<textarea placeholder="Beskrivelse" class="form-control" @bind="treatment.Description" />
 
 	<button class="btn btn-success">Gem</button>
 	<a href="/" class="btn btn-secondary">Annuller</a>

@@ -1,5 +1,65 @@
-﻿<h3>ViewAvailable</h3>
+﻿@page "/viewavailables"
+
+<table class="table">
+	<thead>
+		<tr>
+			<td>
+				Dato
+			</td>
+			<td>
+				Er tiden taget
+			</td>
+			<td>
+				Læge/sygepjeleske
+			</td>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var available in availables)
+		{
+			<tr>
+				<td>
+					@available.Date
+				</td>
+				@if (available.IsTaken == true)
+				{
+					<td>
+						Ja
+					</td>
+				}
+				else
+				{
+					<td>
+					Nej
+				</td>
+				}
+				
+				<td>
+					Jep
+				</td>
+				<td>
+                <a href="/editavailable/@available.AvailableId">
+                    <i class="bi bi-pencil-square"></i>
+                </a>
+            </td>
+            <td>
+                <a href="/deleteavailable/@available.AvailableId">
+                    <i class="bi bi-trash"></i>
+                </a>
+            </td>
+			</tr>
+		}
+	</tbody>
+
+</table>
+
+
 
 @code {
+	private List<Available> availables = new List<Available>();
 
+	protected override void OnInitialized()
+	{
+		availables = _availableRepo.GetAllAvailables().ToList();
+	}
 }

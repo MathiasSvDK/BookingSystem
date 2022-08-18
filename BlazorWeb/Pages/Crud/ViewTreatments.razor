@@ -1,5 +1,49 @@
-﻿<h3>ViewTreatments</h3>
+﻿@page "/viewtreatments"
+
+<table class="table">
+	<thead>
+		<tr>
+			<td>
+				Behandling
+			</td>
+			<td>
+				Beskrivelse
+			</td>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var treatment in treatments)
+		{
+			<tr>
+				<td>
+					@treatment.TreatmentName
+				</td>
+				<td>
+					@treatment.Description
+				</td>
+				<td>
+                <a href="/edittreatment/@treatment.TreatmentId">
+                    <i class="bi bi-pencil-square"></i>
+                </a>
+            </td>
+            <td>
+                <a href="/deletetreatment/@treatment.TreatmentId">
+                    <i class="bi bi-trash"></i>
+                </a>
+            </td>
+			</tr>
+		}
+	</tbody>
+
+</table>
+
+
 
 @code {
+	private List<Treatment> treatments = new List<Treatment>();
 
+	protected override void OnInitialized()
+	{
+		treatments = _treatmentRepo.GetAllTreatments().ToList();
+	}
 }

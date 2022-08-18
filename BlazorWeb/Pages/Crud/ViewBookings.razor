@@ -1,5 +1,55 @@
-﻿<h3>ViewBookings</h3>
+﻿@page "/viewbookings"
+
+<table class="table">
+	<thead>
+		<tr>
+			<td>
+				Behandling
+			</td>
+			<td>
+				Begrundelse
+			</td>
+			<td>
+				Tid
+			</td>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var booking in bookings)
+		{
+			<tr>
+				<td>
+					@booking.Treatment.TreatmentName
+				</td>
+				<td>
+					@booking.Reason
+				</td>
+				<td>
+					@booking.Available.Date
+				</td>
+				<td>
+                <a href="/editbooking/@booking.BookingId">
+                    <i class="bi bi-pencil-square"></i>
+                </a>
+            </td>
+            <td>
+                <a href="/deletebooking/@booking.BookingId">
+                    <i class="bi bi-trash"></i>
+                </a>
+            </td>
+			</tr>
+		}
+	</tbody>
+
+</table>
+
+
 
 @code {
+	private List<Booking> bookings = new List<Booking>();
 
+	protected override void OnInitialized()
+	{
+		bookings = _bookingRepo.GetAllBookings().ToList();
+	}
 }

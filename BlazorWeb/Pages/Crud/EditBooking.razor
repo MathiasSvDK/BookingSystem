@@ -5,7 +5,7 @@
 {
 	<EditForm Model="@booking" OnValidSubmit="HandleValidSubmit">
 		<DataAnnotationsValidator />
-		<h4>ændre booking</h4>
+		<h4>Redigere booking</h4>
 		<hr />
 
 		<ValidationMessage For="@(() => booking.PatientId)" />
@@ -88,10 +88,13 @@
 	protected override async Task OnInitializedAsync()
 	{
 		booking = await _bookingRepo.GetBookingByBookingId(bookingId);
-		availables = _availableRepo.GetAllAvailables().ToList();
+		oldAvailable = booking.Available;
+		availables.Add(oldAvailable);
+		availables.AddRange(_availableRepo.GetAllAvailablesNotTaken().ToList());
 		treatments = _treatmentRepo.GetAllTreatments().ToList();
 		patients = _hospitalRepo.GetAllPatients().ToList();
-		oldAvailable = booking.Available;
+		
+		
 	}
 
 	public async Task HandleValidSubmit()
@@ -108,7 +111,7 @@
 
 			booking.Available = available;
 		}
-
+		booking.Treatment = treatments.Where(t => t.TreatmentId == booking.TreatmentId).FirstOrDefault();
 		await _bookingRepo.UpdateBooking(booking);
 		StateHasChanged();
 
