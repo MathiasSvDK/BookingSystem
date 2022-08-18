@@ -10,9 +10,16 @@ Gets all bookings for that patient
 Gets all bookings
 - GetAllAvailables()
 
-Gets all available times 
+Gets all available times
 
 Use route https://YourDomain.dk/api/booking/available
+
+- GetAllAvailablesNotTaken()
+
+Gets all available times that is not taken
+
+Use route https://YourDomain.dk/api/booking/availablenottaken
+
 - GetAllTreatments()
 Gets all treatments 
 
