@@ -3,6 +3,7 @@ using System;
 using Datalayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Datalayer.Migrations
 {
     [DbContext(typeof(BookingContext))]
-    partial class BookingContextModelSnapshot : ModelSnapshot
+    [Migration("20220818085103_Added_Employee_To_Available")]
+    partial class Added_Employee_To_Available
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -42,8 +44,8 @@ namespace Datalayer.Migrations
                         new
                         {
                             AvailableId = 1,
-                            Date = new DateTime(2022, 8, 18, 10, 58, 57, 938, DateTimeKind.Local).AddTicks(829),
-                            EmployeeId = 2,
+                            Date = new DateTime(2022, 8, 18, 10, 51, 2, 880, DateTimeKind.Local).AddTicks(8493),
+                            EmployeeId = 0,
                             IsTaken = true
                         });
                 });

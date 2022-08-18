@@ -26,7 +26,7 @@
 		await _treatmentRepo.CreateTreatment(treatment);
 
 		StateHasChanged();
-
+		toastService.ShowSuccess("Behandlingen blev oprettet");
 		NavigationManager.NavigateTo("/");
 	}
 }

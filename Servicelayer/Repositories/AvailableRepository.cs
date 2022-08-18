@@ -20,7 +20,7 @@ namespace Servicelayer.Repositories
 
 		public IQueryable<Available> GetAllAvailables()
 		{
-			return _bookingContext.Availables.OrderBy(d => d.Date);
+			return _bookingContext.Availables.AsNoTracking().OrderBy(d => d.Date);
 		}
 
 		public IQueryable<Available> GetAllAvailablesNotTaken()
@@ -30,7 +30,7 @@ namespace Servicelayer.Repositories
 
 		public async Task<Available> GetAvailableById(int availableId)
 		{
-			return await _bookingContext.Availables.AsNoTracking().Where(a => a.AvailableId == availableId).AsNoTracking().FirstOrDefaultAsync();
+			return await _bookingContext.Availables.AsNoTracking().Include(a => a.Booking).Where(a => a.AvailableId == availableId).AsNoTracking().FirstOrDefaultAsync();
 		}
 
 		public async Task CreateAvailable(Available available)

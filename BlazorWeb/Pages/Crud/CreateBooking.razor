@@ -44,22 +44,38 @@
 	<label class="control-label">Begrundelse for behandling</label>
 	<input placeholder="Fornavn" class="form-control" @bind-value="booking.Reason" />
 
-	<ValidationMessage For="@(() => booking.AvailableId)" />
-	<label class="control-label">Tid</label>
-	<select class="form-control" required @bind="booking.AvailableId">
-		<option value="">Vælg en Tid</option>
-		@if (availables == null)
+	<label class="control-label">Læge/sygepjeleske</label>
+	<select @onchange="GetAvailable" class="form-control" required>
+		<option value="">Vælg en Læge/sygepjeleske</option>
+		@if (employees == null)
 		{
 			<option>Loading..</option>
 		}
 		else
 		{
+			@foreach (var employee in employees)
+			{
+				<option value="@employee.Id">@employee.Firstname @employee.Lastname</option>
+			}
+		}
+	</select>
+
+	@if (availables != null)
+	{
+		<ValidationMessage For="@(() => booking.AvailableId)" />
+		<label class="control-label">Tid</label>
+		<select class="form-control" required @bind="booking.AvailableId">
+			<option value="">Vælg en Tid</option>
 			@foreach (var available in availables)
 			{
 				<option value="@available.AvailableId">@available.Date</option>
 			}
-		}
-	</select>
+		</select>
+	}
+	else
+	{
+		<label>Denne Læge/sygepjeleske har ikke nogle ledige tider</label>
+	}
 
 	<button class="btn btn-success">Opret</button>
 	<a href="/" class="btn btn-secondary">Annuller</a>
@@ -67,18 +83,24 @@
 </EditForm>
 
 @code {
-	public Booking booking = new Booking();
+	private Booking booking = new Booking();
 
-	public List<Available> availables = new List<Available>();
-
-	public List<Treatment> treatments = new List<Treatment>();
-	public List<Patient> patients = new List<Patient>();
+	private List<Available> availables;
+	private List<Treatment> treatments = new List<Treatment>();
+	private List<Patient> patients = new List<Patient>();
+	private List<Employee> employees = new List<Employee>();
 
 	protected override async Task OnInitializedAsync()
 	{
-		availables = _availableRepo.GetAllAvailablesNotTaken().ToList();
+
 		treatments = _treatmentRepo.GetAllTreatments().ToList();
 		patients = _hospitalRepo.GetAllPatients().ToList();
+		employees = _hospitalRepo.GetAllEmployees().ToList();
+	}
+
+	private void GetAvailable(ChangeEventArgs e)
+	{
+		availables = _availableRepo.GetAllAvailablesNotTaken().Where(a => a.EmployeeId == Convert.ToInt32(e.Value)).ToList();
 	}
 
 	public async Task HandleValidSubmit()
@@ -91,7 +113,7 @@
 		await _availableRepo.UpdateAvailable(available);
 
 		StateHasChanged();
-
+		toastService.ShowSuccess("Booking blev oprettet");
 		NavigationManager.NavigateTo("/");
 	}
 }

@@ -10,6 +10,23 @@
 	<label class="control-label">Dato</label>
 	<input type="datetime" class="form-control" @bind-value="available.Date" />
 
+	<ValidationMessage For="@(() => available.EmployeeId)" />
+	<label class="control-label">Tid</label>
+	<select class="form-control" required @bind="available.EmployeeId">
+		<option value="">Vælg en Læge/sygepjeleske</option>
+		@if (employees == null)
+		{
+			<option>Loading..</option>
+		}
+		else
+		{
+			@foreach (var employee in employees)
+			{
+				<option value="@employee.Id">@employee.Firstname @employee.Lastname</option>
+			}
+		}
+	</select>
+
 	<button class="btn btn-success">Opret</button>
 	<a href="/" class="btn btn-secondary">Annuller</a>
 
@@ -18,12 +35,20 @@
 @code {
 	Available available = new Available();
 
+	private List<Employee> employees = new List<Employee>();
+
+	protected override void OnInitialized()
+	{
+		employees = _hospitalRepo.GetAllEmployees().ToList();
+	}
+
 	public async Task HandleValidSubmit()
 	{
 		await _availableRepo.CreateAvailable(available);
 
 		StateHasChanged();
 
+		toastService.ShowSuccess("Tiden blev oprettet");
 		NavigationManager.NavigateTo("/");
 	}
 }

@@ -1,4 +1,5 @@
 ﻿@page "/viewavailables"
+@inject NavigationManager NavigationManager
 
 <table class="table">
 	<thead>
@@ -30,23 +31,24 @@
 				else
 				{
 					<td>
-					Nej
-				</td>
+						Nej
+					</td>
 				}
-				
+
 				<td>
-					Jep
+					@employees.Where(e => e.Id == available.EmployeeId).FirstOrDefault().Firstname
+					@employees.Where(e => e.Id == available.EmployeeId).FirstOrDefault().Lastname
 				</td>
 				<td>
-                <a href="/editavailable/@available.AvailableId">
-                    <i class="bi bi-pencil-square"></i>
-                </a>
-            </td>
-            <td>
-                <a href="/deleteavailable/@available.AvailableId">
-                    <i class="bi bi-trash"></i>
-                </a>
-            </td>
+					<a href="/editavailable/@available.AvailableId">
+						<i class="bi bi-pencil-square"></i>
+					</a>
+				</td>
+				<td>
+					<button @onclick="() => deleteOnClick(available.AvailableId)">
+						<i class="bi bi-trash"></i>
+					</button>
+				</td>
 			</tr>
 		}
 	</tbody>
@@ -57,9 +59,25 @@
 
 @code {
 	private List<Available> availables = new List<Available>();
+	private List<Employee> employees = new List<Employee>();
 
 	protected override void OnInitialized()
 	{
 		availables = _availableRepo.GetAllAvailables().ToList();
+		employees = _hospitalRepo.GetAllEmployees().ToList();
 	}
+
+	public async Task deleteOnClick(int availableId)
+	{
+		bool res = await Jsruntime.InvokeAsync<bool>
+		("confirm", $"Er du sikker på at du vil slette denne tid?");
+		if (res)
+		{
+			await _availableRepo.DeleteAvailable(availableId);
+			toastService.ShowSuccess("Tiden blev fjernet");
+			availables = _availableRepo.GetAllAvailables().ToList();
+			//NavigationManager.NavigateTo("/");
+		}
+	}
+
 }

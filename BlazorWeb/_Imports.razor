@@ -10,10 +10,16 @@
 @using BlazorWeb.Shared
 @using System.Linq
 
+@using Newtonsoft.Json
 @using Datalayer.Entities
 @using Servicelayer.Interfaces
+@using Blazored.Toast
+@using Blazored.Toast.Services
+
 
 @inject IHospitalRepository _hospitalRepo
 @inject IBookingRepository _bookingRepo
 @inject IAvailableRepository _availableRepo
 @inject ITreatmentRepository _treatmentRepo
+@inject IJSRuntime Jsruntime
+@inject IToastService toastService

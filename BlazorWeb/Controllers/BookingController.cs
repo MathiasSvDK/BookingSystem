@@ -36,6 +36,13 @@ namespace BlazorWeb.Controller
 		[HttpGet]
 		public async Task<ICollection<Available>> GetAllAvailables()
 		{
+			return _availableRepo.GetAllAvailables().ToList();
+		}
+
+		[Route("availablenottaken")]
+		[HttpGet]
+		public async Task<ICollection<Available>> GetAllAvailablesNotTaken()
+		{
 			return _availableRepo.GetAllAvailablesNotTaken().ToList();
 		}
 

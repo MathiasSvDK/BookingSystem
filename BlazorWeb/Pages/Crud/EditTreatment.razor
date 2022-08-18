@@ -35,7 +35,7 @@
 		await _treatmentRepo.UpdateTreatment(treatment);
 
 		StateHasChanged();
-
+		toastService.ShowSuccess("Behandlingen blev ændret");
 		NavigationManager.NavigateTo("/");
 	}
 }

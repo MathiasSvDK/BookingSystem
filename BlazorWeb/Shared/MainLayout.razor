@@ -1,6 +1,14 @@
 ﻿@inherits LayoutComponentBase
 
+<BlazoredToasts Timeout="3"
+                IconType="IconType.FontAwesome"
+                SuccessClass="success-toast-override"
+                SuccessIcon="fas fa-check-circle"
+                ErrorIcon="fas fa-exclamation-circle" 
+                InfoIcon="fas fa-info-circle"/>
+
 <PageTitle>BlazorWeb</PageTitle>
+
 
 <div class="page">
     <div class="sidebar">
@@ -8,10 +16,6 @@
     </div>
 
     <main>
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
-
         <article class="content px-4">
             @Body
         </article>

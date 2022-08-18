@@ -23,7 +23,7 @@ namespace Datalayer
 			   );
 
 			modelBuilder.Entity<Available>().HasData(
-			   new Available { AvailableId = 1, Date = DateTime.Now , IsTaken = true}
+			   new Available { AvailableId = 1, Date = DateTime.Now , IsTaken = true, EmployeeId = 2}
 			   );
 
 			modelBuilder.Entity<Booking>().HasData(
