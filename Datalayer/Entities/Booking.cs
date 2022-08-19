@@ -10,6 +10,7 @@ namespace Datalayer.Entities
 	{
 		public int BookingId { get; set; }
 		public string Reason { get; set; }
+		public bool IsApproved { get; set; } = false;
 
 		public int TreatmentId { get; set; }
 		public Treatment? Treatment { get; set; }

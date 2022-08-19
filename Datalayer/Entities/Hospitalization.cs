@@ -10,7 +10,9 @@ namespace Datalayer.Entities
 	{
 		public int HospitalizationID { get; set; }
 		public string Reason { get; set; }
-		public bool IsDischarge { get; set; } = false;
+		public DateTime TimeOfHospitalized { get; set; }
+		public DateTime TimeOfDischarged { get; set; }
+		public bool IsDischarged { get; set; } = false;
 		public int PatientId { get; set; }
 		public int HospitalId { get; set; }
 	}
