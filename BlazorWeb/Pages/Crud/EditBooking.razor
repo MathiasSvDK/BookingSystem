@@ -63,11 +63,11 @@
 			}
 		</select>
 
-		@if (availables != null)
+		@if (availables.Count != 0)
 		{
 			<ValidationMessage For="@(() => booking.AvailableId)" />
 			<label class="control-label">Tid</label>
-			<select class="form-control" @bind="booking.AvailableId">
+			<select  class="form-control" required @bind="booking.AvailableId">
 				<option value="">Vælg en Tid</option>
 				@foreach (var available in availables)
 				{
@@ -75,6 +75,13 @@
 				}
 			</select>
 		}
+		else
+		{
+			<label>Denne Læge/sygepjeleske har ikke nogle ledige tider</label>
+			<br />
+			
+		}
+		<br />
 		<button class="btn btn-success">Gem</button>
 		<a href="/" class="btn btn-secondary">Annuller</a>
 
@@ -85,7 +92,9 @@
 @code {
 	[Parameter]
 	public int bookingId { get; set; }
+
 	Available oldAvailable;
+	Treatment oldTreatment;
 
 	private Booking booking;
 	private List<Available> availables = new List<Available>();
@@ -98,23 +107,40 @@
 	{
 		booking = await _bookingRepo.GetBookingByBookingId(bookingId);
 		oldAvailable = booking.Available;
+		oldTreatment = booking.Treatment;
+		employee = await _hospitalRepo.GetEmployeeById(oldAvailable.EmployeeId);
 		availables.Add(oldAvailable);
-		availables.AddRange(_availableRepo.GetAllAvailablesNotTaken().ToList());
+		availables.AddRange(_availableRepo.GetAllAvailablesNotTaken().Where(a => a.EmployeeId == employee.Id).ToList());
 		treatments = _treatmentRepo.GetAllTreatments().ToList();
 		patients = _hospitalRepo.GetAllPatients().ToList();
 		employees = _hospitalRepo.GetAllEmployees().ToList();
-		employee = await _hospitalRepo.GetEmployeeById(oldAvailable.EmployeeId);
 		employees.Remove(employee);
 	}
 
 	private void GetAvailable(ChangeEventArgs e)
 	{
-		availables = _availableRepo.GetAllAvailablesNotTaken().Where(a => a.EmployeeId == Convert.ToInt32(e.Value)).ToList();
+		if (Convert.ToInt32(e.Value) == employee.Id)
+		{
+			availables.Clear();
+			availables.Add(oldAvailable);
+			availables.AddRange(_availableRepo.GetAllAvailablesNotTaken().Where(a => a.EmployeeId == employee.Id).ToList());
+		}
+		else
+		{
+			availables = _availableRepo.GetAllAvailablesNotTaken().Where(a => a.EmployeeId == Convert.ToInt32(e.Value)).ToList();
+			if (availables.Count != 0)
+			{
+				booking.AvailableId = availables.FirstOrDefault().AvailableId;
+			}
+		}
+
 	}
 
 	public async Task HandleValidSubmit()
 	{
 		Available available = availables.Where(a => a.AvailableId == booking.AvailableId).FirstOrDefault();
+		Treatment treatment = treatments.Where(t => t.TreatmentId == booking.TreatmentId).FirstOrDefault();
+
 
 
 		if (oldAvailable.AvailableId != available.AvailableId)
@@ -126,7 +152,12 @@
 
 			booking.Available = available;
 		}
-		booking.Treatment = treatments.Where(t => t.TreatmentId == booking.TreatmentId).FirstOrDefault();
+
+		if (oldTreatment.TreatmentId != treatment.TreatmentId)
+		{
+			booking.Treatment = treatment;
+		}
+		
 		await _bookingRepo.UpdateBooking(booking);
 		StateHasChanged();
 		toastService.ShowSuccess("Booking blev ændret");
