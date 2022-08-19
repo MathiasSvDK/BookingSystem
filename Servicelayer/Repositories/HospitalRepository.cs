@@ -1,5 +1,6 @@
 ﻿using Datalayer;
 using Datalayer.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Servicelayer.Interfaces;
 using System;
@@ -13,14 +14,16 @@ namespace Servicelayer.Repositories
 	public class HospitalRepository : IHospitalRepository
 	{
 		private readonly hospitalContext _hospitalContext;
-		public HospitalRepository(hospitalContext hospitalCotext)
+		private readonly UserManager<IdentityUser> _userManager;
+		public HospitalRepository(hospitalContext hospitalCotext, UserManager<IdentityUser> userManager)
 		{
 			_hospitalContext = hospitalCotext;
+			_userManager = userManager;
 		}
 
 		public async Task<Patient> GetPatientById(int patientId)
 		{
-			return await _hospitalContext.Patients.FirstOrDefaultAsync(p => p.Id == patientId);
+			return null; //await _hospitalContext.Patients.FirstOrDefaultAsync(p => p.Id == patientId);
 		}
 
 		public async Task<Employee> GetEmployeeById(int employeeId)
@@ -30,7 +33,7 @@ namespace Servicelayer.Repositories
 
 		public IQueryable<Patient> GetAllPatients()
 		{
-			return _hospitalContext.Patients;
+			return (IQueryable<Patient>)_userManager.GetUsersInRoleAsync("3");
 		}
 
 		public IQueryable<Employee> GetAllEmployees()

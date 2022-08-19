@@ -6,6 +6,12 @@ using Microsoft.EntityFrameworkCore;
 using Servicelayer.Interfaces;
 using Servicelayer.Repositories;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Identity;
+using BlazorWeb.Data;
+using Microsoft.AspNetCore.Components.Authorization;
+using BlazorWeb.Areas.Identity;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,14 +28,43 @@ builder.Services.AddDbContext<BookingContext>(options =>
 
 builder.Services.AddDbContext<hospitalContext>(options =>
 			options.UseMySql(Configuration.GetConnectionString("HospitalConnectionString").ToString(), Microsoft.EntityFrameworkCore.ServerVersion.Parse("10.3.34-mariadb")));
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+			options.UseMySql(Configuration.GetConnectionString("IdentityConnection").ToString(), Microsoft.EntityFrameworkCore.ServerVersion.Parse("10.3.34-mariadb")));
+
+builder.Services.AddDefaultIdentity<IdentityUser>()
+	.AddRoles<IdentityRole>()
+	.AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddBlazoredToast();
+builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
 builder.Services.AddScoped<ITreatmentRepository, TreatmentRepository>();
 builder.Services.AddScoped<IAvailableRepository, AvailableRepository>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<IHospitalRepository, HospitalRepository>();
+
+builder.Services.AddAuthentication(options =>
+{
+	options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+	options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+})
+.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+.AddOpenIdConnect(
+ OpenIdConnectDefaults.AuthenticationScheme,
+	 options =>
+	 {
+		 options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+		 options.SignOutScheme = OpenIdConnectDefaults.AuthenticationScheme;
+		 options.Authority = builder.Configuration["InteractiveServiceSettings:AuthorityUrl"];
+		 options.ClientId = builder.Configuration["InteractiveServiceSettings:ClientId"];
+		 options.ClientSecret = builder.Configuration["InteractiveServiceSettings:ClientSecret"];
+
+		 options.ResponseType = "code";
+		 options.SaveTokens = true;
+		 options.GetClaimsFromUserInfoEndpoint = true;
+	 }
+	);
 
 var app = builder.Build();
 
@@ -50,5 +85,6 @@ app.UseRouting();
 app.MapControllers();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
+app.UseAuthentication();;
 
 app.Run();
