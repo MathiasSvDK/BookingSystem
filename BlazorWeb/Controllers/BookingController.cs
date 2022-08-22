@@ -21,7 +21,7 @@ namespace BlazorWeb.Controller
 		}
 
 		[HttpGet("{id}")]
-		public async Task<ICollection<Booking>> GetBookingsByPatientId(string Id)
+		public async Task<ICollection<Booking>> GetBookingsByApplicationUserId(string Id)
 		{
 			return _bookingRepo.GetBookingsByPatientId(Id).ToList();
 		}

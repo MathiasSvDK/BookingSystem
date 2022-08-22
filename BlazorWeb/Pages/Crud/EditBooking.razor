@@ -1,5 +1,6 @@
 ﻿@page "/editbooking/{bookingId:int}"
 @inject NavigationManager NavigationManager
+@inject UserManager<ApplicationUser> userManager
 
 @if (booking != null)
 {
@@ -9,8 +10,8 @@
 		<hr />
 
 		<ValidationMessage For="@(() => booking.PatientId)" />
-		<label class="control-label">Patient</label>
-		@*<input placeholder="Fornavn" class="form-control" @bind-value="booking.PatientId" />*@
+		<label class="control-label">ApplicationUser</label>
+		@*<input placeholder="Fornavn" class="form-control" @bind-value="booking.ApplicationUserId" />*@
 
 		<ValidationMessage For="@(() => booking.TreatmentId)" />
 		<label class="control-label">Behandling</label>
@@ -35,14 +36,14 @@
 
 		<label class="control-label">Læge/sygepjeleske</label>
 		<select @onchange="GetAvailable" class="form-control" required>
-			<option selected value="@employee.Id">@employee.Firstname @employee.Lastname</option>
-			@if (employees == null)
+			<option selected value="@Employee.Id">@Employee.Firstname @Employee.Lastname</option>
+			@if (Employee == null)
 			{
 				<option>Loading..</option>
 			}
 			else
 			{
-				@foreach (var employee in employees)
+				@foreach (var employee in Employees)
 				{
 					<option value="@employee.Id">@employee.Firstname @employee.Lastname</option>
 				}
@@ -85,35 +86,39 @@
 	private Booking booking;
 	private List<Available> availables = new List<Available>();
 	private List<Treatment> treatments = new List<Treatment>();
-	public List<Patient> patients = new List<Patient>();
-	private List<Employee> employees = new List<Employee>();
-	private Employee employee = new Employee();
+	public List<ApplicationUser> Patients = new List<ApplicationUser>();
+	private List<ApplicationUser> Employees = new List<ApplicationUser>();
+	private ApplicationUser Employee = new ApplicationUser();
 
 	protected override async Task OnInitializedAsync()
 	{
 		booking = await _bookingRepo.GetBookingByBookingId(bookingId);
 		oldAvailable = booking.Available;
 		oldTreatment = booking.Treatment;
-		employee = await _hospitalRepo.GetEmployeeById(oldAvailable.EmployeeId);
+		Employee = await userManager.FindByIdAsync(oldAvailable.EmployeeId);
 		availables.Add(oldAvailable);
-		availables.AddRange(_availableRepo.GetAllAvailablesNotTaken().Where(a => a.EmployeeId == employee.Id).ToList());
+		availables.AddRange(_availableRepo.GetAllAvailablesNotTaken().Where(a => a.EmployeeId == Employee.Id).ToList());
 		treatments = _treatmentRepo.GetAllTreatments().ToList();
-		patients = _hospitalRepo.GetAllPatients().ToList();
-		employees = _hospitalRepo.GetAllEmployees().ToList();
-		employees.Remove(employee);
+
+		List<ApplicationUser> applicationUsers = userManager.Users.ToList();
+
+		Patients.AddRange(applicationUsers.Where(e => e.Role == 0));
+
+		Employees.AddRange(applicationUsers.Where(e => e.Role != 0));
+		Employees.Remove(Employee);
 	}
 
 	private void GetAvailable(ChangeEventArgs e)
 	{
-		if (Convert.ToInt32(e.Value) == employee.Id)
+		if (e.Value.ToString() == Employee.Id)
 		{
 			availables.Clear();
 			availables.Add(oldAvailable);
-			availables.AddRange(_availableRepo.GetAllAvailablesNotTaken().Where(a => a.EmployeeId == employee.Id).ToList());
+			availables.AddRange(_availableRepo.GetAllAvailablesNotTaken().Where(a => a.EmployeeId == Employee.Id).ToList());
 		}
 		else
 		{
-			availables = _availableRepo.GetAllAvailablesNotTaken().Where(a => a.EmployeeId == Convert.ToInt32(e.Value)).ToList();
+			availables = _availableRepo.GetAllAvailablesNotTaken().Where(a => a.EmployeeId == e.Value.ToString()).ToList();
 			if (availables.Count != 0)
 			{
 				booking.AvailableId = availables.FirstOrDefault().AvailableId;

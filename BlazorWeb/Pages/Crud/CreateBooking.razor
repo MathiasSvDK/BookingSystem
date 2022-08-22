@@ -2,9 +2,8 @@
 @inject NavigationManager NavigationManager
 @using System.Security.Claims
 @using Microsoft.AspNetCore.Components.Authorization
-@using Microsoft.AspNetCore.Identity
 @inject AuthenticationStateProvider AuthenticationStateProvider
-@inject UserManager<IdentityUser> userManager
+@inject UserManager<ApplicationUser> userManager
 
 @if (true)
 {
@@ -36,13 +35,13 @@
 	<label class="control-label">Læge/sygepjeleske</label>
 	<select @onchange="GetAvailable" class="form-control" required>
 		<option value="">Vælg en Læge/sygepjeleske</option>
-		@if (employees == null)
+		@if (Employees == null)
 		{
 			<option>Loading..</option>
 		}
 		else
 		{
-			@foreach (var employee in employees)
+			@foreach (var employee in Employees)
 			{
 				<option value="@employee.Id">@employee.Firstname @employee.Lastname</option>
 			}
@@ -72,6 +71,7 @@
 </EditForm>
 }
 
+@*
 @if (false)
 {
 	<EditForm Model="@booking" OnValidSubmit="HandleValidSubmit">
@@ -79,16 +79,16 @@
 	<h4>Opret en Booking</h4>
 	<hr />
 	<ValidationMessage For="@(() => booking.PatientId)" />
-	<label class="control-label">Patient</label>
+	<label class="control-label">ApplicationUser</label>
 	<select class="form-control" required @bind="booking.PatientId">
-		<option value="">Vælg patient</option>
-		@if (patients == null)
+		<option value="">Vælg ApplicationUser</option>
+		@if (Patients == null)
 		{
 			<option>Loading..</option>
 		}
 		else
 		{
-			@foreach (var patient in patients)
+			@foreach (var patient in Patients)
 			{
 				<option value="@patient.Id">@patient.Firstname @patient.Lastname</option>
 			}
@@ -119,13 +119,13 @@
 	<label class="control-label">Læge/sygepjeleske</label>
 	<select @onchange="GetAvailable" class="form-control" required>
 		<option value="">Vælg en Læge/sygepjeleske</option>
-		@if (employees == null)
+		@if (Employees == null)
 		{
 			<option>Loading..</option>
 		}
 		else
 		{
-			@foreach (var employee in employees)
+			@foreach (var employee in Employees)
 			{
 				<option value="@employee.Id">@employee.Firstname @employee.Lastname</option>
 			}
@@ -154,7 +154,7 @@
 
 </EditForm>
 
-}
+}*@
 
 
 @code {
@@ -162,35 +162,24 @@
 
 	private List<Available> availables = new List<Available>();
 	private List<Treatment> treatments = new List<Treatment>();
-	private List<Patient> patients = new List<Patient>();
-	private List<Employee> employees = new List<Employee>();
-
-	string uId;
+	private List<ApplicationUser> Patients = new List<ApplicationUser>();
+	private List<ApplicationUser> Employees = new List<ApplicationUser>();
 
 	protected override async Task OnInitializedAsync()
 	{
 
-		var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-		var user = authState.User;
+		List<ApplicationUser> applicationUsers = userManager.Users.ToList();
 
-		if (user.Identity.IsAuthenticated)
-		{
-			uId = user.FindFirst(c => c.Type == "sub").Value;
-			patients.Where(ui => ui.Uid == uId);
-			if (true)
-			{
-				
-			}
-		}
+		Patients.AddRange(applicationUsers.Where(e => e.Role == 0));
+
+		Employees.AddRange(applicationUsers.Where(e => e.Role != 0));
 
 		treatments = _treatmentRepo.GetAllTreatments().ToList();
-		patients = _hospitalRepo.GetAllPatients().ToList();
-		employees = _hospitalRepo.GetAllEmployees().ToList();
 	}
 
 	private void GetAvailable(ChangeEventArgs e)
 	{
-		availables = _availableRepo.GetAllAvailablesNotTaken().Where(a => a.EmployeeId == Convert.ToInt32(e.Value)).ToList();
+		availables = _availableRepo.GetAllAvailablesNotTaken().Where(a => a.EmployeeId == e.Value.ToString()).ToList();
 	}
 
 	public async Task HandleValidSubmit()

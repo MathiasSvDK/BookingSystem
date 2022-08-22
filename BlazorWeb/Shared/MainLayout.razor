@@ -1,26 +1,48 @@
 ﻿@inherits LayoutComponentBase
 
+@inject NavigationManager _navMan
+
 <BlazoredToasts Timeout="3"
-                IconType="IconType.FontAwesome"
-                SuccessClass="success-toast-override"
-                SuccessIcon="fas fa-check-circle"
-                ErrorIcon="fas fa-exclamation-circle" 
-                InfoIcon="fas fa-info-circle"/>
+				IconType="IconType.FontAwesome"
+				SuccessClass="success-toast-override"
+				SuccessIcon="fas fa-check-circle"
+				ErrorIcon="fas fa-exclamation-circle"
+				InfoIcon="fas fa-info-circle" />
 
 <PageTitle>BlazorWeb</PageTitle>
 
+<AuthorizeView>
+	<Authorized>
+		<div class="page">
+			<div class="sidebar">
+				<NavMenu />
+			</div>
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+			<main>
+				<div class="top-row px-4 auth">
+					<LoginDisplay />
+				</div>
+				<article class="content px-4">
+					@Body
+				</article>
+			</main>
+		</div>
+	</Authorized>
+	<NotAuthorized>
+		<!---->
+	</NotAuthorized>
+</AuthorizeView>
 
-    <main>
-        <div class="top-row px-4 auth">
-            <LoginDisplay />
-        </div>
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
+
+@code {
+	[CascadingParameter] protected Task<AuthenticationState> AuthStat { get; set; }
+	protected async override Task OnInitializedAsync()
+	{
+		base.OnInitialized();
+		var user = (await AuthStat).User;
+		if (!user.Identity.IsAuthenticated)
+		{
+			_navMan.NavigateTo($"/Identity/Account/Login");
+		}
+	}
+}

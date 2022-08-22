@@ -1,6 +1,6 @@
 ﻿@page "/editavailable/{availableId:int}"
 @inject NavigationManager NavigationManager
-
+@inject UserManager<ApplicationUser> userManager
 
 <EditForm Model="@available" OnValidSubmit="HandleValidSubmit">
 	<DataAnnotationsValidator />
@@ -14,13 +14,13 @@
 	<label class="control-label">Tid</label>
 	<select class="form-control" required @bind="available.EmployeeId">
 		<option value="">Vælg en Læge/sygepjeleske</option>
-		@if (employees == null)
+		@if (Employees == null)
 		{
 			<option>Loading..</option>
 		}
 		else
 		{
-			@foreach (var employee in employees)
+			@foreach (var employee in Employees)
 			{
 				<option value="@employee.Id">@employee.Firstname @employee.Lastname</option>
 			}
@@ -38,12 +38,16 @@
 
 	Available available = new Available();
 
-	private List<Employee> employees = new List<Employee>();
+	private List<ApplicationUser> Employees = new List<ApplicationUser>();
 
 	protected override async Task OnInitializedAsync()
 	{
+		
 		available = await _availableRepo.GetAvailableById(availableId);
-		employees = _hospitalRepo.GetAllEmployees().ToList();
+		List<ApplicationUser> applicationUsers = userManager.Users.ToList();
+
+		Employees.AddRange(applicationUsers.Where(e => e.Role != 0));
+
 	}
 
 	public async Task HandleValidSubmit()

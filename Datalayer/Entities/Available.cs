@@ -11,7 +11,7 @@ namespace Datalayer.Entities
         public int AvailableId { get; set; }
         public DateTime Date { get; set; }
         public bool IsTaken { get; set; } = false;
-        public int EmployeeId { get; set; }
+        public string EmployeeId { get; set; }
 
         public Booking? Booking { get; set; }
     }
