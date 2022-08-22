@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Datalayer.Entities;
 using BlazorWeb.Services;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,17 +31,19 @@ builder.Services.AddDbContext<BookingContext>(options =>
 
 builder.Services.AddDbContext<hospitalContext>(options =>
 			options.UseMySql(Configuration.GetConnectionString("HospitalConnectionString").ToString(), Microsoft.EntityFrameworkCore.ServerVersion.Parse("10.3.34-mariadb")));
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 			options.UseMySql(Configuration.GetConnectionString("IdentityConnection").ToString(), Microsoft.EntityFrameworkCore.ServerVersion.Parse("10.3.34-mariadb")));
 
 builder.Services.AddDefaultIdentity<ApplicationUser>()
 	.AddSignInManager<CustomSignInManager>()
-	.AddEntityFrameworkStores<ApplicationDbContext>();
+	.AddEntityFrameworkStores<ApplicationDbContext>()
+	.AddDefaultTokenProviders();
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddBlazoredToast();
-builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
+builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
 builder.Services.AddScoped<ITreatmentRepository, TreatmentRepository>();
 builder.Services.AddScoped<IAvailableRepository, AvailableRepository>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
@@ -83,9 +86,12 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapControllers();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
-app.UseAuthentication();;
+
 
 app.Run();
