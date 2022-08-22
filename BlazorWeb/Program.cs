@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Components.Authorization;
 using BlazorWeb.Areas.Identity;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Datalayer.Entities;
+using BlazorWeb.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,8 +33,8 @@ builder.Services.AddDbContext<hospitalContext>(options =>
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 			options.UseMySql(Configuration.GetConnectionString("IdentityConnection").ToString(), Microsoft.EntityFrameworkCore.ServerVersion.Parse("10.3.34-mariadb")));
 
-builder.Services.AddDefaultIdentity<IdentityUser>()
-	.AddRoles<IdentityRole>()
+builder.Services.AddDefaultIdentity<ApplicationUser>()
+	.AddSignInManager<CustomSignInManager>()
 	.AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddRazorPages();

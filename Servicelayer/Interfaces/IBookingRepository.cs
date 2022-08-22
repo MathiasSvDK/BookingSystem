@@ -8,7 +8,7 @@ namespace Servicelayer.Interfaces
 		Task DeleteBooking(int bookingId);
 		IQueryable<Booking> GetAllBookings();
 		Task<Booking> GetBookingByBookingId(int bookingId);
-		IQueryable<Booking> GetBookingsByPatientId(int patientId);
+		IQueryable<Booking> GetBookingsByPatientId(string patientId);
 		Task UpdateBooking(Booking booking);
 		Task UpdateBookingForApi(Booking booking);
 	}

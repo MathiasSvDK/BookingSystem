@@ -20,7 +20,7 @@ namespace Servicelayer.Repositories
 			_availableRepo = availableRepository;
 		}
 
-		public IQueryable<Booking> GetBookingsByPatientId(int patientId)
+		public IQueryable<Booking> GetBookingsByPatientId(string patientId)
 		{
 			return _bookingContext.Bookings.Include(t => t.Treatment).Include(a => a.Available).Where(p => p.PatientId == patientId);
 		}

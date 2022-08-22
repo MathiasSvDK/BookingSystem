@@ -18,7 +18,7 @@ namespace Datalayer.Entities
 		public int AvailableId { get; set; }
 		public Available? Available { get; set; }
 
-		public int PatientId { get; set; }
+		public string PatientId { get; set; }
 		public int HospitalId { get; set; }
 
 

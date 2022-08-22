@@ -11,20 +11,6 @@
 		<ValidationMessage For="@(() => booking.PatientId)" />
 		<label class="control-label">Patient</label>
 		@*<input placeholder="Fornavn" class="form-control" @bind-value="booking.PatientId" />*@
-		<select class="form-control" required @bind="booking.PatientId">
-			<option value="">Vælg patient</option>
-			@if (patients == null)
-			{
-				<option>Loading..</option>
-			}
-			else
-			{
-				@foreach (var patient in patients)
-				{
-					<option value="@patient.Id">@patient.Firstname @patient.Lastname</option>
-				}
-			}
-		</select>
 
 		<ValidationMessage For="@(() => booking.TreatmentId)" />
 		<label class="control-label">Behandling</label>

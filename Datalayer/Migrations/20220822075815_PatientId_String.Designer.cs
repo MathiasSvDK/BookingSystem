@@ -3,6 +3,7 @@ using System;
 using Datalayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Datalayer.Migrations
 {
     [DbContext(typeof(BookingContext))]
-    partial class BookingContextModelSnapshot : ModelSnapshot
+    [Migration("20220822075815_PatientId_String")]
+    partial class PatientId_String
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,6 +39,15 @@ namespace Datalayer.Migrations
                     b.HasKey("AvailableId");
 
                     b.ToTable("Availables");
+
+                    b.HasData(
+                        new
+                        {
+                            AvailableId = 1,
+                            Date = new DateTime(2022, 8, 22, 9, 58, 15, 81, DateTimeKind.Local).AddTicks(7775),
+                            EmployeeId = 2,
+                            IsTaken = true
+                        });
                 });
 
             modelBuilder.Entity("Datalayer.Entities.Booking", b =>
@@ -73,6 +84,18 @@ namespace Datalayer.Migrations
                     b.HasIndex("TreatmentId");
 
                     b.ToTable("Bookings");
+
+                    b.HasData(
+                        new
+                        {
+                            BookingId = 1,
+                            AvailableId = 1,
+                            HospitalId = 1,
+                            IsApproved = false,
+                            PatientId = "1",
+                            Reason = "Check up",
+                            TreatmentId = 1
+                        });
                 });
 
             modelBuilder.Entity("Datalayer.Entities.Hospitalization", b =>
@@ -102,7 +125,7 @@ namespace Datalayer.Migrations
 
                     b.HasKey("HospitalizationID");
 
-                    b.ToTable("Hospitalization");
+                    b.ToTable("hospitalization");
                 });
 
             modelBuilder.Entity("Datalayer.Entities.Treatment", b =>

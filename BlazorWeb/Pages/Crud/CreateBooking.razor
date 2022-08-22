@@ -1,13 +1,85 @@
 ﻿@page "/createbooking"
 @inject NavigationManager NavigationManager
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Identity
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject UserManager<IdentityUser> userManager
 
-<EditForm Model="@booking" OnValidSubmit="HandleValidSubmit">
+@if (true)
+{
+	<EditForm Model="@booking" OnValidSubmit="HandleValidSubmit">
+	<DataAnnotationsValidator />
+	<h4>Opret en Booking</h4>
+	<hr />
+	<ValidationMessage For="@(() => booking.TreatmentId)" />
+	<label class="control-label">Behandling</label>
+	<select class="form-control" required @bind="booking.TreatmentId">
+		<option value="">Vælg Behandling</option>
+		@if (treatments == null)
+		{
+			<option>Loading..</option>
+		}
+		else
+		{
+			@foreach (var treatment in treatments)
+			{
+				<option value="@treatment.TreatmentId">@treatment.TreatmentName</option>
+			}
+		}
+	</select>
+
+	<ValidationMessage For="@(() => booking.Reason)" />
+	<label class="control-label">Begrundelse for behandling</label>
+	<input placeholder="Fornavn" class="form-control" @bind-value="booking.Reason" />
+
+	<label class="control-label">Læge/sygepjeleske</label>
+	<select @onchange="GetAvailable" class="form-control" required>
+		<option value="">Vælg en Læge/sygepjeleske</option>
+		@if (employees == null)
+		{
+			<option>Loading..</option>
+		}
+		else
+		{
+			@foreach (var employee in employees)
+			{
+				<option value="@employee.Id">@employee.Firstname @employee.Lastname</option>
+			}
+		}
+	</select>
+
+	@if (availables != null)
+	{
+		<ValidationMessage For="@(() => booking.AvailableId)" />
+		<label class="control-label">Tid</label>
+		<select class="form-control" required @bind="booking.AvailableId">
+			<option value="">Vælg en Tid</option>
+			@foreach (var available in availables)
+			{
+				<option value="@available.AvailableId">@available.Date</option>
+			}
+		</select>
+	}
+	else if(availables.Count == 0)
+	{
+		<label>Denne Læge/sygepjeleske har ikke nogle ledige tider</label>
+	}
+
+	<button class="btn btn-success">Opret</button>
+	<a href="/" class="btn btn-secondary">Annuller</a>
+
+</EditForm>
+}
+
+@if (false)
+{
+	<EditForm Model="@booking" OnValidSubmit="HandleValidSubmit">
 	<DataAnnotationsValidator />
 	<h4>Opret en Booking</h4>
 	<hr />
 	<ValidationMessage For="@(() => booking.PatientId)" />
 	<label class="control-label">Patient</label>
-	@*<input placeholder="Fornavn" class="form-control" @bind-value="booking.PatientId" />*@
 	<select class="form-control" required @bind="booking.PatientId">
 		<option value="">Vælg patient</option>
 		@if (patients == null)
@@ -82,16 +154,34 @@
 
 </EditForm>
 
+}
+
+
 @code {
 	private Booking booking = new Booking();
 
-	private List<Available> availables;
+	private List<Available> availables = new List<Available>();
 	private List<Treatment> treatments = new List<Treatment>();
 	private List<Patient> patients = new List<Patient>();
 	private List<Employee> employees = new List<Employee>();
 
+	string uId;
+
 	protected override async Task OnInitializedAsync()
 	{
+
+		var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+		var user = authState.User;
+
+		if (user.Identity.IsAuthenticated)
+		{
+			uId = user.FindFirst(c => c.Type == "sub").Value;
+			patients.Where(ui => ui.Uid == uId);
+			if (true)
+			{
+				
+			}
+		}
 
 		treatments = _treatmentRepo.GetAllTreatments().ToList();
 		patients = _hospitalRepo.GetAllPatients().ToList();
