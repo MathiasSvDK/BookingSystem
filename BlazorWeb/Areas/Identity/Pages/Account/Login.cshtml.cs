@@ -16,15 +16,16 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Datalayer.Entities;
+using BlazorWeb.Services;
 
 namespace BlazorWeb.Areas.Identity.Pages.Account
 {
 	public class LoginModel : PageModel
 	{
-		private readonly SignInManager<ApplicationUser> _signInManager;
+		private readonly CustomSignInManager _signInManager;
 		private readonly ILogger<LoginModel> _logger;
 
-		public LoginModel(SignInManager<ApplicationUser> signInManager, ILogger<LoginModel> logger)
+		public LoginModel(CustomSignInManager signInManager, ILogger<LoginModel> logger)
 		{
 			_signInManager = signInManager;
 			_logger = logger;

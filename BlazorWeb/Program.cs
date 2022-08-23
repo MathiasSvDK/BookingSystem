@@ -30,6 +30,7 @@ builder.Services.AddDbContext<BookingContext>(options =>
 
 builder.Services.AddDbContext<hospitalContext>(options =>
 			options.UseMySql(Configuration.GetConnectionString("HospitalConnectionString").ToString(), Microsoft.EntityFrameworkCore.ServerVersion.Parse("10.3.34-mariadb")));
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 			options.UseMySql(Configuration.GetConnectionString("IdentityConnection").ToString(), Microsoft.EntityFrameworkCore.ServerVersion.Parse("10.3.34-mariadb")));
 
@@ -40,10 +41,13 @@ builder.Services.AddDefaultIdentity<ApplicationUser>()
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddBlazoredToast();
-builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
+builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
 builder.Services.AddScoped<ITreatmentRepository, TreatmentRepository>();
 builder.Services.AddScoped<IAvailableRepository, AvailableRepository>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
+
+builder.Services.Configure<IdentityServerSettings>(builder.Configuration.GetSection("IdentityServerSettings"));
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -83,9 +87,12 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapControllers();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
-app.UseAuthentication();;
+
 
 app.Run();

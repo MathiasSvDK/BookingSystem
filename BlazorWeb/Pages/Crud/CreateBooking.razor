@@ -1,8 +1,5 @@
 ﻿@page "/createbooking"
 @inject NavigationManager NavigationManager
-@using System.Security.Claims
-@using Microsoft.AspNetCore.Components.Authorization
-@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject UserManager<ApplicationUser> userManager
 
 @if (true)
@@ -170,9 +167,9 @@
 
 		List<ApplicationUser> applicationUsers = userManager.Users.ToList();
 
-		Patients.AddRange(applicationUsers.Where(e => e.Role == 0));
+		Patients.AddRange(applicationUsers.Where(e => e.Role == 3));
 
-		Employees.AddRange(applicationUsers.Where(e => e.Role != 0));
+		Employees.AddRange(applicationUsers.Where(e => e.Role != 3));
 
 		treatments = _treatmentRepo.GetAllTreatments().ToList();
 	}
