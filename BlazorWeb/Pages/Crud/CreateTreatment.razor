@@ -23,6 +23,7 @@
 
 	public async Task HandleValidSubmit()
 	{
+
 		await _treatmentRepo.CreateTreatment(treatment);
 
 		StateHasChanged();

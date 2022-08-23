@@ -46,9 +46,6 @@ builder.Services.AddScoped<ITreatmentRepository, TreatmentRepository>();
 builder.Services.AddScoped<IAvailableRepository, AvailableRepository>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 
-builder.Services.Configure<IdentityServerSettings>(builder.Configuration.GetSection("IdentityServerSettings"));
-builder.Services.AddScoped<ITokenService, TokenService>();
-
 builder.Services.AddAuthentication(options =>
 {
 	options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;

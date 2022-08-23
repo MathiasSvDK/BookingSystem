@@ -1,9 +1,12 @@
 ﻿@page "/createavailable"
 @inject NavigationManager NavigationManager
 @inject UserManager<ApplicationUser> userManager
+@inject SignInManager<ApplicationUser> signInManager
+@attribute [Authorize]
 
-
-<EditForm Model="@available" OnValidSubmit="HandleValidSubmit">
+@if (signInManager.Context.User.Claims.Where(c => c.Type == "gruppe").FirstOrDefault().Value != "3")
+{
+	<EditForm Model="@available" OnValidSubmit="HandleValidSubmit">
 	<DataAnnotationsValidator />
 	<h4>Opret en Tid</h4>
 	<hr />
@@ -32,6 +35,7 @@
 	<a href="/" class="btn btn-secondary">Annuller</a>
 
 </EditForm>
+}
 
 @code {
 	Available available = new Available();
@@ -42,7 +46,7 @@
 	{
 		List<ApplicationUser> applicationUsers = userManager.Users.ToList();
 
-		Employees.AddRange(applicationUsers.Where(e => e.Role != 0));
+		Employees.AddRange(applicationUsers.Where(e => e.Role != 3));
 	}
 
 	public async Task HandleValidSubmit()

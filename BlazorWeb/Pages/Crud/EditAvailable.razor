@@ -1,36 +1,42 @@
 ﻿@page "/editavailable/{availableId:int}"
 @inject NavigationManager NavigationManager
 @inject UserManager<ApplicationUser> userManager
+@inject SignInManager<ApplicationUser> signInManager
+@attribute [Authorize]
 
-<EditForm Model="@available" OnValidSubmit="HandleValidSubmit">
-	<DataAnnotationsValidator />
-	<h4>Redigere tidspunkt</h4>
-	<hr />
-	<ValidationMessage For="@(() => available.Date)" />
-	<label class="control-label">Dato</label>
-	<input type="datetime" class="form-control" @bind-value="available.Date" />
+@if (signInManager.Context.User.Claims.Where(c => c.Type == "gruppe").FirstOrDefault().Value != "3")
+{
 
-	<ValidationMessage For="@(() => available.EmployeeId)" />
-	<label class="control-label">Tid</label>
-	<select class="form-control" required @bind="available.EmployeeId">
-		<option value="">Vælg en Læge/sygepjeleske</option>
-		@if (Employees == null)
-		{
-			<option>Loading..</option>
-		}
-		else
-		{
-			@foreach (var employee in Employees)
+	<EditForm Model="@available" OnValidSubmit="HandleValidSubmit">
+		<DataAnnotationsValidator />
+		<h4>Redigere tidspunkt</h4>
+		<hr />
+		<ValidationMessage For="@(() => available.Date)" />
+		<label class="control-label">Dato</label>
+		<input type="datetime" class="form-control" @bind-value="available.Date" />
+
+		<ValidationMessage For="@(() => available.EmployeeId)" />
+		<label class="control-label">Tid</label>
+		<select class="form-control" required @bind="available.EmployeeId">
+			<option value="">Vælg en Læge/sygepjeleske</option>
+			@if (Employees == null)
 			{
-				<option value="@employee.Id">@employee.Firstname @employee.Lastname</option>
+				<option>Loading..</option>
 			}
-		}
-	</select>
+			else
+			{
+				@foreach (var employee in Employees)
+				{
+					<option value="@employee.Id">@employee.Firstname @employee.Lastname</option>
+				}
+			}
+		</select>
 
-	<button class="btn btn-success">Gem</button>
-	<a href="/" class="btn btn-secondary">Annuller</a>
+		<button class="btn btn-success">Gem</button>
+		<a href="/" class="btn btn-secondary">Annuller</a>
 
-</EditForm>
+	</EditForm>
+}
 
 @code {
 	[Parameter]
@@ -42,11 +48,11 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		
+
 		available = await _availableRepo.GetAvailableById(availableId);
 		List<ApplicationUser> applicationUsers = userManager.Users.ToList();
 
-		Employees.AddRange(applicationUsers.Where(e => e.Role != 0));
+		Employees.AddRange(applicationUsers.Where(e => e.Role != 3));
 
 	}
 

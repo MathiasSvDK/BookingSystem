@@ -1,13 +1,36 @@
 ﻿@page "/createbooking"
 @inject NavigationManager NavigationManager
 @inject UserManager<ApplicationUser> userManager
+@inject SignInManager<ApplicationUser> signInManager
+@attribute [Authorize]
 
-@if (true)
-{
-	<EditForm Model="@booking" OnValidSubmit="HandleValidSubmit">
+<EditForm Model="@booking" OnValidSubmit="HandleValidSubmit">
 	<DataAnnotationsValidator />
 	<h4>Opret en Booking</h4>
 	<hr />
+	@if (User.Role == 0)
+	{
+		<input hidden @bind-value="booking.PatientId = User.Id"></input>
+	}
+	@if (User.Role != 0)
+	{
+		<ValidationMessage For="@(() => booking.PatientId)" />
+		<label class="control-label">Patient</label>
+		<select class="form-control" required @bind="booking.PatientId">
+			<option value="">Vælg Patient</option>
+			@if (Patients == null)
+			{
+				<option>Loading..</option>
+			}
+			else
+			{
+				@foreach (var patient in Patients.OrderBy(p => p.Firstname).ThenBy(p => p.Lastname))
+				{
+					<option value="@patient.Id">@patient.Firstname @patient.Lastname</option>
+				}
+			}
+		</select>
+	}
 	<ValidationMessage For="@(() => booking.TreatmentId)" />
 	<label class="control-label">Behandling</label>
 	<select class="form-control" required @bind="booking.TreatmentId">
@@ -27,7 +50,7 @@
 
 	<ValidationMessage For="@(() => booking.Reason)" />
 	<label class="control-label">Begrundelse for behandling</label>
-	<input placeholder="Fornavn" class="form-control" @bind-value="booking.Reason" />
+	<input placeholder="Begrundelse for behandling" class="form-control" @bind-value="booking.Reason" />
 
 	<label class="control-label">Læge/sygepjeleske</label>
 	<select @onchange="GetAvailable" class="form-control" required>
@@ -38,14 +61,14 @@
 		}
 		else
 		{
-			@foreach (var employee in Employees)
+			@foreach (var employee in Employees.OrderBy(e => e.Firstname).ThenBy(e => e.Lastname))
 			{
 				<option value="@employee.Id">@employee.Firstname @employee.Lastname</option>
 			}
 		}
 	</select>
 
-	@if (availables != null)
+	@if (availables.Count != 0)
 	{
 		<ValidationMessage For="@(() => booking.AvailableId)" />
 		<label class="control-label">Tid</label>
@@ -57,101 +80,17 @@
 			}
 		</select>
 	}
-	else if(availables.Count == 0)
+	else
 	{
 		<label>Denne Læge/sygepjeleske har ikke nogle ledige tider</label>
+		<br />
 	}
-
-	<button class="btn btn-success">Opret</button>
-	<a href="/" class="btn btn-secondary">Annuller</a>
-
-</EditForm>
-}
-
-@*
-@if (false)
-{
-	<EditForm Model="@booking" OnValidSubmit="HandleValidSubmit">
-	<DataAnnotationsValidator />
-	<h4>Opret en Booking</h4>
-	<hr />
-	<ValidationMessage For="@(() => booking.PatientId)" />
-	<label class="control-label">ApplicationUser</label>
-	<select class="form-control" required @bind="booking.PatientId">
-		<option value="">Vælg ApplicationUser</option>
-		@if (Patients == null)
-		{
-			<option>Loading..</option>
-		}
-		else
-		{
-			@foreach (var patient in Patients)
-			{
-				<option value="@patient.Id">@patient.Firstname @patient.Lastname</option>
-			}
-		}
-	</select>
-
-	<ValidationMessage For="@(() => booking.TreatmentId)" />
-	<label class="control-label">Behandling</label>
-	<select class="form-control" required @bind="booking.TreatmentId">
-		<option value="">Vælg Behandling</option>
-		@if (treatments == null)
-		{
-			<option>Loading..</option>
-		}
-		else
-		{
-			@foreach (var treatment in treatments)
-			{
-				<option value="@treatment.TreatmentId">@treatment.TreatmentName</option>
-			}
-		}
-	</select>
-
-	<ValidationMessage For="@(() => booking.Reason)" />
-	<label class="control-label">Begrundelse for behandling</label>
-	<input placeholder="Fornavn" class="form-control" @bind-value="booking.Reason" />
-
-	<label class="control-label">Læge/sygepjeleske</label>
-	<select @onchange="GetAvailable" class="form-control" required>
-		<option value="">Vælg en Læge/sygepjeleske</option>
-		@if (Employees == null)
-		{
-			<option>Loading..</option>
-		}
-		else
-		{
-			@foreach (var employee in Employees)
-			{
-				<option value="@employee.Id">@employee.Firstname @employee.Lastname</option>
-			}
-		}
-	</select>
-
-	@if (availables != null)
-	{
-		<ValidationMessage For="@(() => booking.AvailableId)" />
-		<label class="control-label">Tid</label>
-		<select class="form-control" required @bind="booking.AvailableId">
-			<option value="">Vælg en Tid</option>
-			@foreach (var available in availables)
-			{
-				<option value="@available.AvailableId">@available.Date</option>
-			}
-		</select>
-	}
-	else if(availables.Count == 0)
-	{
-		<label>Denne Læge/sygepjeleske har ikke nogle ledige tider</label>
-	}
-
+	<br />
 	<button class="btn btn-success">Opret</button>
 	<a href="/" class="btn btn-secondary">Annuller</a>
 
 </EditForm>
 
-}*@
 
 
 @code {
@@ -162,8 +101,11 @@
 	private List<ApplicationUser> Patients = new List<ApplicationUser>();
 	private List<ApplicationUser> Employees = new List<ApplicationUser>();
 
+	ApplicationUser User = new ApplicationUser();
+
 	protected override async Task OnInitializedAsync()
 	{
+		User = await userManager.GetUserAsync(signInManager.Context.User);
 
 		List<ApplicationUser> applicationUsers = userManager.Users.ToList();
 
@@ -177,17 +119,19 @@
 	private void GetAvailable(ChangeEventArgs e)
 	{
 		availables = _availableRepo.GetAllAvailablesNotTaken().Where(a => a.EmployeeId == e.Value.ToString()).ToList();
+		if (availables.Count != 0)
+		{
+			booking.AvailableId = availables.FirstOrDefault().AvailableId;
+		}
 	}
 
 	public async Task HandleValidSubmit()
 	{
-		await _bookingRepo.CreateBooking(booking);
-
-
 		Available available = availables.Where(a => a.AvailableId == booking.AvailableId).FirstOrDefault();
 		available.IsTaken = true;
 		await _availableRepo.UpdateAvailable(available);
 
+		await _bookingRepo.CreateBooking(booking);
 		StateHasChanged();
 		toastService.ShowSuccess("Booking blev oprettet");
 		NavigationManager.NavigateTo("/");

@@ -1,61 +1,71 @@
 ﻿@page "/viewavailables"
 @inject NavigationManager NavigationManager
 @inject UserManager<ApplicationUser> userManager
+@inject SignInManager<ApplicationUser> signInManager
+@attribute [Authorize]
 
-<table class="table">
-	<thead>
-		<tr>
-			<td>
-				Dato
-			</td>
-			<td>
-				Er tiden taget
-			</td>
-			<td>
-				Læge/sygepjeleske
-			</td>
-		</tr>
-	</thead>
-	<tbody>
-		@foreach (var available in availables)
-		{
+@if (signInManager.Context.User.Claims.Where(c => c.Type == "gruppe").FirstOrDefault().Value != "3")
+{
+	<table class="table">
+		<thead>
 			<tr>
 				<td>
-					@available.Date
-				</td>
-				@if (available.IsTaken == true)
-				{
-					<td>
-						Ja
-					</td>
-				}
-				else
-				{
-					<td>
-						Nej
-					</td>
-				}
-
-				<td>
-					@Employees.Where(e => e.Id == available.EmployeeId).FirstOrDefault().Firstname
-					@Employees.Where(e => e.Id == available.EmployeeId).FirstOrDefault().Lastname
+					Dato
 				</td>
 				<td>
-					<a href="/editavailable/@available.AvailableId">
-						<i class="bi bi-pencil-square"></i>
-					</a>
+					Er tiden taget
 				</td>
 				<td>
-					<button @onclick="() => deleteOnClick(available.AvailableId)">
-						<i class="bi bi-trash"></i>
-					</button>
+					Læge/sygepjeleske
 				</td>
 			</tr>
-		}
-	</tbody>
+		</thead>
+		<tbody>
+			@foreach (var available in availables)
+			{
+				<tr>
+					<td>
+						@available.Date
+					</td>
+					@if (available.IsTaken == true)
+					{
+						<td>
+							Ja
+						</td>
+					}
+					else
+					{
+						<td>
+							Nej
+						</td>
+					}
 
-</table>
+					<td>
+						@if (Employees != null || Employees.Count() != 0)
+						{
+							@Employees.Where(e => e.Id == available.EmployeeId).FirstOrDefault().Firstname
 
+							@Employees.Where(e => e.Id == available.EmployeeId).FirstOrDefault().Lastname
+						}
+
+					</td>
+					<td>
+						<a href="/editavailable/@available.AvailableId">
+							<i class="bi bi-pencil-square"></i>
+						</a>
+					</td>
+					<td>
+						<button @onclick="() => deleteOnClick(available.AvailableId)">
+							<i class="bi bi-trash"></i>
+						</button>
+					</td>
+				</tr>
+			}
+		</tbody>
+
+	</table>
+
+}
 
 
 @code {
@@ -67,7 +77,7 @@
 		availables = _availableRepo.GetAllAvailables().ToList();
 		List<ApplicationUser> applicationUsers = userManager.Users.ToList();
 
-		Employees.AddRange(applicationUsers.Where(e => e.Role != 0));
+		Employees.AddRange(applicationUsers.Where(e => e.Role != 3));
 
 	}
 
