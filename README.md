@@ -1,7 +1,7 @@
 # BookingSystem
 
 ## Booking api controller
-route https://YourDomain.dk/api/booking
+route /api/booking
 - GetBookingsByPatientId(int id)
 
 Gets all bookings for that patient
@@ -12,18 +12,18 @@ Gets all bookings
 
 Gets all available times
 
-Use route https://YourDomain.dk/api/booking/available
+Use route /api/booking/available
 
 - GetAllAvailablesNotTaken()
 
 Gets all available times that is not taken
 
-Use route https://YourDomain.dk/api/booking/availablenottaken
+Use route /api/booking/availablenottaken
 
 - GetAllTreatments()
 Gets all treatments 
 
-Use route https://YourDomain.dk/api/booking/treatment
+Use route /api/booking/treatment
 - CreateBooking()
 
 Create a booking 
