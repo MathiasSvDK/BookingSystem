@@ -13,6 +13,13 @@
 			<td>
 				Tid
 			</td>
+			<td>
+				Godkend tiden
+			</td>
+			<td>
+			</td>
+			<td>
+			</td>
 		</tr>
 	</thead>
 	<tbody>
@@ -29,12 +36,15 @@
 					@booking.Available.Date
 				</td>
 				<td>
-					<a href="/editbooking/@booking.BookingId">
+					<input type="checkbox"/>
+				</td>
+				<td>
+					<a class="btn btn-info" href="/editbooking/@booking.BookingId">
 						<i class="bi bi-pencil-square"></i>
 					</a>
 				</td>
 				<td>
-					<button @onclick="() => deleteOnClick(booking.BookingId)">
+					<button class="btn btn-danger" @onclick="() => deleteOnClick(booking.BookingId)">
 						<i class="bi bi-trash"></i>
 					</button>
 				</td>

@@ -10,6 +10,10 @@
 			<td>
 				Beskrivelse
 			</td>
+			<td>
+			</td>
+			<td>
+			</td>
 		</tr>
 	</thead>
 	<tbody>
@@ -23,13 +27,13 @@
 					@treatment.Description
 				</td>
 				<td>
-					<a href="/edittreatment/@treatment.TreatmentId">
+					<a class="btn btn-info" href="/edittreatment/@treatment.TreatmentId">
 						<i class="bi bi-pencil-square"></i>
 					</a>
 				</td>
 				<td>
 				<td>
-					<button @onclick="() => deleteOnClick(treatment.TreatmentId)">
+					<button class="btn btn-danger" @onclick="() => deleteOnClick(treatment.TreatmentId)">
 						<i class="bi bi-trash"></i>
 					</button>
 				</td>
