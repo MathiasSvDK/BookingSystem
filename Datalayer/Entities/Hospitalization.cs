@@ -13,7 +13,7 @@ namespace Datalayer.Entities
 		public DateTime TimeOfHospitalized { get; set; }
 		public DateTime TimeOfDischarged { get; set; }
 		public bool IsDischarged { get; set; } = false;
-		public int PatientId { get; set; }
+		public string PatientId { get; set; }
 		public int HospitalId { get; set; }
 	}
 }

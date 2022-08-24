@@ -1,0 +1,110 @@
+﻿@page "/edithospitalization/{hospitalizationId:int}"
+@inject NavigationManager NavigationManager
+@inject UserManager<ApplicationUser> userManager
+@inject SignInManager<ApplicationUser> signInManager
+@attribute [Authorize]
+
+@if (user.Role != 3)
+{
+	<EditForm Model="@hospitalization" OnValidSubmit="HandleValidSubmit">
+
+		<h4>Redigere indlæggelsen</h4>
+		<hr />
+
+		<ValidationMessage For="@(() => hospitalization.PatientId)" />
+		<label class="control-label">Patient</label>
+		<select class="form-control" required @bind="hospitalization.PatientId">
+			<option value="">Vælg Patient</option>
+			@if (patients == null)
+			{
+				<option>Loading..</option>
+			}
+			else
+			{
+				@foreach (var patient in patients.OrderBy(p => p.Firstname).ThenBy(p => p.Lastname))
+				{
+					<option value="@patient.Id">@patient.Firstname @patient.Lastname</option>
+				}
+			}
+		</select>
+
+		<ValidationMessage For="@(() => hospitalization.Reason)" />
+		<label class="control-label">Begrundelse for indlæggelse</label>
+		<input placeholder="Begrundelse for indlæggelse" class="form-control" @bind-value="hospitalization.Reason" />
+
+		<ValidationMessage For="@(() => hospitalization.TimeOfHospitalized)" />
+		<label class="control-label">Dato for indlæggelse</label>
+		<input type="datetime" placeholder="Begrundelse for behandling" class="form-control" @bind-value="hospitalization.TimeOfHospitalized" />
+
+		<ValidationMessage For="@(() => hospitalization.HospitalId)" />
+		<label class="control-label">Hospital</label>
+		<select class="form-control" required @bind=" hospitalization.HospitalId">
+			<option value="">Vælg Hospital</option>
+			@if (patients == null)
+			{
+				<option>Loading..</option>
+			}
+			else
+			{
+				@foreach (var hospital in hospitals.OrderBy(h => h.Name))
+				{
+					<option value="@hospital.Id">@hospital.Name</option>
+				}
+			}
+		</select>
+
+		<ValidationMessage For="@(() => hospitalization.IsDischarged)" />
+		<label class="control-label">Er patienten udskrevet?</label>
+		<input type="checkbox" @bind-value="hospitalization.IsDischarged" />
+		<br/>
+		@if (hospitalization.IsDischarged == true)
+		{
+			<ValidationMessage For="@(() => hospitalization.TimeOfDischarged)" />
+			<label class="control-label">Dato for udskrivelse af patient</label>
+			<input type="datetime" placeholder="Begrundelse for behandling" class="form-control" @bind-value="hospitalization.TimeOfDischarged" />
+		}
+		<br/>
+		<button class="btn btn-success">Gem</button>
+		<a href="/" class="btn btn-secondary">Annuller</a>
+
+	</EditForm>
+}
+
+
+
+@code {
+
+	[Parameter]
+	public int hospitalizationId { get; set; }
+
+	private Hospitalization hospitalization = new Hospitalization();
+
+	private ApplicationUser user = new ApplicationUser();
+
+	private List<ApplicationUser> patients = new List<ApplicationUser>();
+
+	private List<Hospital> hospitals = new List<Hospital>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		hospitalization = await _hospitalizedRepo.GetHospitalizationByHospitalizationId(hospitalizationId);
+
+		hospitals = _hospitalizedRepo.GetAllHospitals().ToList();
+
+		user = await userManager.GetUserAsync(signInManager.Context.User);
+
+		List<ApplicationUser> applicationUsers = userManager.Users.ToList();
+
+		patients.AddRange(applicationUsers.Where(e => e.Role == 3));
+	}
+
+	public async Task HandleValidSubmit()
+	{
+		await _hospitalizedRepo.UpdateHospitalization(hospitalization);
+
+		StateHasChanged();
+
+		toastService.ShowSuccess("Indlæggelsen er blevet ændret");
+		NavigationManager.NavigateTo("/");
+	}
+}

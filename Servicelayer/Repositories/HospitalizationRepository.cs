@@ -13,9 +13,11 @@ namespace Servicelayer.Repositories
 	public class HospitalizationRepository : IHospitalizationRepository
 	{
 		private readonly BookingContext _bookingContext;
-		public HospitalizationRepository(BookingContext bookingContext)
+		private readonly hospitalContext _hospitalContext;
+		public HospitalizationRepository(BookingContext bookingContext, hospitalContext hospitalContext)
 		{
 			_bookingContext = bookingContext;
+			_hospitalContext = hospitalContext;
 		}
 
 		public IQueryable<Hospitalization> GetHospitalizationsByHospitalId(int hospitalId)
@@ -51,6 +53,11 @@ namespace Servicelayer.Repositories
 			Hospitalization hospitalization = await GetHospitalizationByHospitalizationId(hospitalizationId);
 			_bookingContext.Hospitalization.Remove(hospitalization);
 			await _bookingContext.SaveChangesAsync();
+		}
+
+		public IQueryable<Hospital> GetAllHospitals()
+		{
+			return _hospitalContext.Hospitals.AsNoTracking();
 		}
 	}
 }

@@ -10,5 +10,6 @@ namespace Servicelayer.Interfaces
 		Task<Hospitalization> GetHospitalizationByHospitalizationId(int hospitalizationId);
 		IQueryable<Hospitalization> GetHospitalizationsByHospitalId(int hospitalId);
 		Task UpdateHospitalization(Hospitalization booking);
+		IQueryable<Hospital> GetAllHospitals();
 	}
 }
