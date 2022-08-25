@@ -48,6 +48,7 @@ builder.Services.AddScoped<ITreatmentRepository, TreatmentRepository>();
 builder.Services.AddScoped<IAvailableRepository, AvailableRepository>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<IHospitalizationRepository, HospitalizationRepository>();
+//builder.Services.AddScoped<Userservice>();
 
 builder.Services.AddAuthentication(options =>
 {

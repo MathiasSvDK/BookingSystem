@@ -1,5 +1,7 @@
-﻿@page "/createteatment"
+﻿@page "/createtreatment"
 @inject NavigationManager NavigationManager
+@inject UserManager<ApplicationUser> userManager
+@inject SignInManager<ApplicationUser> signInManager
 
 <EditForm Model="@treatment" OnValidSubmit="HandleValidSubmit">
 	<DataAnnotationsValidator />

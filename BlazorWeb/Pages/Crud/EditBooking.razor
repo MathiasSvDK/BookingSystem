@@ -106,7 +106,7 @@
 
 	Available oldAvailable;
 	Treatment oldTreatment;
-	ApplicationUser User = new ApplicationUser();
+	public ApplicationUser User { get; set; }
 
 	private Booking booking;
 	private List<Available> availables = new List<Available>();
@@ -118,7 +118,7 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		User = await userManager.GetUserAsync(signInManager.Context.User);
+		User = await userManager.FindByNameAsync(signInManager.Context.User.Identity.Name);
 		booking = await _bookingRepo.GetBookingByBookingId(bookingId);
 		oldAvailable = booking.Available;
 		oldTreatment = booking.Treatment;

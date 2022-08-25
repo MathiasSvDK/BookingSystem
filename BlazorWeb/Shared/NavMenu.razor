@@ -1,4 +1,7 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@inject UserManager<ApplicationUser> userManager
+@inject SignInManager<ApplicationUser> signInManager
+
+<div class="top-row ps-3 navbar navbar-dark">
 	<div class="container-fluid">
 		<a class="navbar-brand" href="">BlazorWeb</a>
 		<button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
@@ -17,13 +20,48 @@
 					</NavLink>
 				</div>
 				<div class="nav-item px-3">
-					<NavLink class="nav-link" href="counter">
-						<span class="oi oi-plus" aria-hidden="true"></span> Counter
+					<NavLink class="nav-link" href="createbooking">
+						<span class="oi oi-plus" aria-hidden="true"></span> Booke en tid
 					</NavLink>
 				</div>
 				<div class="nav-item px-3">
-					<NavLink class="nav-link" href="fetchdata">
-						<span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
+					<NavLink class="nav-link" href="mybookings">
+						<span class="oi oi-calendar" aria-hidden="true"></span> Mine tider
+					</NavLink>
+				</div>
+				<div class="nav-item px-3">
+					<NavLink class="nav-link" href="createavailable">
+						<span class="oi oi-plus" aria-hidden="true"></span> Opret en tid
+					</NavLink>
+				</div>
+				<div class="nav-item px-3">
+					<NavLink class="nav-link" href="createtreatment">
+						<span class="oi oi-plus" aria-hidden="true"></span> Opret en behandling
+					</NavLink>
+				</div>
+				<div class="nav-item px-3">
+					<NavLink class="nav-link" href="createhospitalization">
+						<span class="oi oi-plus" aria-hidden="true"></span> Booke indlæggelse
+					</NavLink>
+				</div>
+				<div class="nav-item px-3">
+					<NavLink class="nav-link" href="viewhospitalizations">
+						<span class="oi oi-plus" aria-hidden="true"></span> Se indlæggelse
+					</NavLink>
+				</div>
+				<div class="nav-item px-3">
+					<NavLink class="nav-link" href="viewbookings">
+						<span class="oi oi-list" aria-hidden="true"></span> Se  bookede undersøgelser
+					</NavLink>
+				</div>
+				<div class="nav-item px-3">
+					<NavLink class="nav-link" href="viewavailables">
+						<span class="oi oi-plus" aria-hidden="true"></span> Se alle tider
+					</NavLink>
+				</div>
+				<div class="nav-item px-3">
+					<NavLink class="nav-link" href="viewtreatments">
+						<span class="oi oi-plus" aria-hidden="true"></span> Se booke indlæggelse
 					</NavLink>
 				</div>
 			</Authorized>
@@ -35,9 +73,16 @@
 
 
 @code {
+	public ApplicationUser User { get; set; }
+
 	private bool collapseNavMenu = true;
 
 	private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+	protected override async Task OnInitializedAsync()
+	{
+		User = await userManager.GetUserAsync(signInManager.Context.User);
+	}
 
 	private void ToggleNavMenu()
 	{

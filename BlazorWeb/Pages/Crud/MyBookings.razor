@@ -22,7 +22,6 @@
 					Er tiden godkendt
 				</td>
 				<td>
-					
 				</td>
 			</tr>
 		</thead>
@@ -66,7 +65,7 @@
 @code {
 	private List<Booking> bookings = new List<Booking>();
 
-	ApplicationUser user = new ApplicationUser();
+	public ApplicationUser user { get; set; }
 
 	protected override async Task OnInitializedAsync()
 	{

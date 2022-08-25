@@ -6,7 +6,7 @@
 
 <EditForm Model="@booking" OnValidSubmit="HandleValidSubmit">
 	<DataAnnotationsValidator />
-	<h4>Opret en Booking</h4>
+	<h4>Booke en tid til undersøgelse</h4>
 	<hr />
 	@if (User.Role == 0)
 	{
@@ -101,7 +101,7 @@
 	private List<ApplicationUser> Patients = new List<ApplicationUser>();
 	private List<ApplicationUser> Employees = new List<ApplicationUser>();
 
-	ApplicationUser User = new ApplicationUser();
+	public ApplicationUser User { get; set; }
 
 	protected override async Task OnInitializedAsync()
 	{

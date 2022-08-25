@@ -1,60 +1,71 @@
 ﻿@page "/viewbookings"
 @inject NavigationManager NavigationManager
+@inject UserManager<ApplicationUser> userManager
+@inject SignInManager<ApplicationUser> signInManager
 
-<table class="table">
-	<thead>
-		<tr>
-			<td>
-				Behandling
-			</td>
-			<td>
-				Begrundelse
-			</td>
-			<td>
-				Tid
-			</td>
-			<td>
-				Godkend tiden
-			</td>
-			<td>
-			</td>
-			<td>
-			</td>
-		</tr>
-	</thead>
-	<tbody>
-		@foreach (var booking in bookings)
-		{
+@if (signInManager.Context.User.Claims.Where(c => c.Type == "gruppe").FirstOrDefault().Value != "3")
+{
+	<table class="table">
+		<thead>
 			<tr>
 				<td>
-					@booking.Treatment.TreatmentName
+					Behandling
 				</td>
 				<td>
-					@booking.Reason
+					Begrundelse
 				</td>
 				<td>
-					@booking.Available.Date
+					Tid
 				</td>
 				<td>
-					<input type="checkbox"/>
+					Godkend tiden
 				</td>
 				<td>
-					<a class="btn btn-info" href="/editbooking/@booking.BookingId">
-						<i class="bi bi-pencil-square"></i>
-					</a>
 				</td>
 				<td>
-					<button class="btn btn-danger" @onclick="() => deleteOnClick(booking.BookingId)">
-						<i class="bi bi-trash"></i>
-					</button>
 				</td>
 			</tr>
-		}
-	</tbody>
+		</thead>
+		<tbody>
+			@foreach (var booking in bookings)
+			{
+				<tr>
+					<td>
+						@booking.Treatment.TreatmentName
+					</td>
+					<td>
+						@booking.Reason
+					</td>
+					<td>
+						@booking.Available.Date
+					</td>
+					<td>
+						@if (booking.IsApproved == true)
+						{
+							<input checked @bind-value="booking.IsApproved" @onclick="() => UpdatdeBookingIsApproved(booking, true)" type="checkbox" />
+						}
+						else
+						{
+							<input @bind-value="booking.IsApproved" @onclick="() => UpdatdeBookingIsApproved(booking, false)" type="checkbox" />
+						}
 
-</table>
+					</td>
+					<td>
+						<a class="btn btn-info" href="/editbooking/@booking.BookingId">
+							<i class="bi bi-pencil-square"></i>
+						</a>
+					</td>
+					<td>
+						<button class="btn btn-danger" @onclick="() => deleteOnClick(booking.BookingId)">
+							<i class="bi bi-trash"></i>
+						</button>
+					</td>
+				</tr>
+			}
+		</tbody>
 
-
+	</table>
+}
 
 @code {
 	private List<Booking> bookings = new List<Booking>();
@@ -62,6 +73,19 @@
 	protected override void OnInitialized()
 	{
 		bookings = _bookingRepo.GetAllBookings().ToList();
+	}
+
+	private async Task UpdatdeBookingIsApproved(Booking booking, bool IsChecked)
+	{
+		if (IsChecked == true)
+		{
+			booking.IsApproved = false;
+		}
+		else
+		{
+			booking.IsApproved = true;
+		}
+		await _bookingRepo.UpdateBooking(booking);
 	}
 
 	public async Task deleteOnClick(int bookingId)
