@@ -54,7 +54,7 @@
 
 	protected override void OnInitialized()
 	{
-		treatments = _treatmentRepo.GetAllTreatments().ToList();
+		treatments = _treatmentRepo.GetAllTreatments().OrderBy(t => t.TreatmentName).ToList();
 	}
 
 	public async Task deleteOnClick(int treatmentId)

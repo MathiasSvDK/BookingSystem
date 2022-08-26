@@ -13,7 +13,7 @@
 		<hr />
 		<ValidationMessage For="@(() => available.Date)" />
 		<label class="control-label">Dato</label>
-		<input type="datetime" class="form-control" @bind-value="available.Date" />
+		<RadzenDatePicker @bind-Value="available.Date" ShowTime="true" HoursStep="1" MinutesStep="5" Change=@(args => OnChange(args, "DatePicker with time", "dd/MM/yyyy HH:mm")) DateFormat="dd/MM/yyyy HH:mm" Class="form-control" />
 
 		<ValidationMessage For="@(() => available.EmployeeId)" />
 		<label class="control-label">Tid</label>
@@ -54,6 +54,10 @@
 
 		Employees.AddRange(applicationUsers.Where(e => e.Role != 3));
 
+	}
+
+	void OnChange(DateTime? value, string name, string format)
+	{
 	}
 
 	public async Task HandleValidSubmit()

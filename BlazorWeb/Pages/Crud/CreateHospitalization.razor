@@ -34,7 +34,11 @@
 
 		<ValidationMessage For="@(() => hospitalization.TimeOfHospitalized)" />
 		<label class="control-label">Dato for indlæggelse</label>
-		<input type="datetime" placeholder="Begrundelse for behandling" class="form-control" @bind-value="hospitalization.TimeOfHospitalized" />
+		<RadzenDatePicker Min="DateTime.Now" @bind-Value="hospitalization.TimeOfHospitalized" ShowTime="true" HoursStep="1" MinutesStep="5" Change=@(args => OnChange(args, "DatePicker with time", "dd/MM/yyyy HH:mm")) DateFormat="dd/MM/yyyy HH:mm" Class="form-control">
+			<FooterTemplate>
+				<RadzenButton Click=@OnTodayClick Text="Today" />
+			</FooterTemplate>
+		</RadzenDatePicker>
 
 		<ValidationMessage For="@(() => hospitalization.HospitalId)" />
 		<label class="control-label">Hospital</label>
@@ -52,7 +56,7 @@
 				}
 			}
 		</select>
-		<br/>
+		<br />
 		<button class="btn btn-success">Opret</button>
 		<a href="/" class="btn btn-secondary">Annuller</a>
 
@@ -79,6 +83,17 @@
 		List<ApplicationUser> applicationUsers = userManager.Users.ToList();
 
 		patients.AddRange(applicationUsers.Where(e => e.Role == 3));
+
+		hospitalization.TimeOfHospitalized = DateTime.Now;
+	}
+
+	void OnChange(DateTime? value, string name, string format)
+	{
+	}
+
+	void OnTodayClick()
+	{
+		hospitalization.TimeOfHospitalized = DateTime.Now;
 	}
 
 	public async Task HandleValidSubmit()

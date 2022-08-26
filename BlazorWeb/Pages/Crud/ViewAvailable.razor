@@ -18,6 +18,12 @@
 				<td>
 					Læge/sygepjeleske
 				</td>
+				<td>
+					
+				</td>
+				<td>
+					
+				</td>
 			</tr>
 		</thead>
 		<tbody>
@@ -43,9 +49,7 @@
 					<td>
 						@if (Employees != null || Employees.Count() != 0)
 						{
-							@Employees.Where(e => e.Id == available.EmployeeId).FirstOrDefault().Firstname
-
-							@Employees.Where(e => e.Id == available.EmployeeId).FirstOrDefault().Lastname
+							<p>@Employees.Where(e => e.Id == available.EmployeeId).FirstOrDefault().Firstname @Employees.Where(e => e.Id == available.EmployeeId).FirstOrDefault().Lastname</p> 
 						}
 
 					</td>

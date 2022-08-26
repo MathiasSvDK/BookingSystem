@@ -34,7 +34,7 @@
 
 		<ValidationMessage For="@(() => hospitalization.TimeOfHospitalized)" />
 		<label class="control-label">Dato for indlæggelse</label>
-		<input type="datetime" placeholder="Begrundelse for behandling" class="form-control" @bind-value="hospitalization.TimeOfHospitalized" />
+		<RadzenDatePicker @bind-Value="hospitalization.TimeOfHospitalized" ShowTime="true" HoursStep="1" MinutesStep="5" Change=@(args => OnChange(args, "DatePicker with time", "dd/MM/yyyy HH:mm")) DateFormat="dd/MM/yyyy HH:mm" Class="form-control" />
 
 		<ValidationMessage For="@(() => hospitalization.HospitalId)" />
 		<label class="control-label">Hospital</label>
@@ -56,14 +56,18 @@
 		<ValidationMessage For="@(() => hospitalization.IsDischarged)" />
 		<label class="control-label">Er patienten udskrevet?</label>
 		<input type="checkbox" @bind-value="hospitalization.IsDischarged" />
-		<br/>
+		<br />
 		@if (hospitalization.IsDischarged == true)
 		{
 			<ValidationMessage For="@(() => hospitalization.TimeOfDischarged)" />
 			<label class="control-label">Dato for udskrivelse af patient</label>
-			<input type="datetime" placeholder="Begrundelse for behandling" class="form-control" @bind-value="hospitalization.TimeOfDischarged" />
+			<RadzenDatePicker Min="DateTime.Now" @bind-Value="hospitalization.TimeOfDischarged" ShowTime="true" HoursStep="1" MinutesStep="5" Change=@(args => OnChange(args, "DatePicker with time", "dd/MM/yyyy HH:mm")) DateFormat="dd/MM/yyyy HH:mm" Class="form-control">
+				<FooterTemplate>
+					<RadzenButton Click=@OnTodayClick Text="Today" />
+				</FooterTemplate>
+			</RadzenDatePicker>
 		}
-		<br/>
+		<br />
 		<button class="btn btn-success">Gem</button>
 		<a href="/" class="btn btn-secondary">Annuller</a>
 
@@ -79,7 +83,7 @@
 
 	private Hospitalization hospitalization = new Hospitalization();
 
-	public ApplicationUser user { get; set; }
+	public ApplicationUser user = new ApplicationUser();
 
 	private List<ApplicationUser> patients = new List<ApplicationUser>();
 
@@ -96,6 +100,15 @@
 		List<ApplicationUser> applicationUsers = userManager.Users.ToList();
 
 		patients.AddRange(applicationUsers.Where(e => e.Role == 3));
+	}
+
+	void OnChange(DateTime? value, string name, string format)
+	{
+	}
+
+	void OnTodayClick()
+	{
+		hospitalization.TimeOfDischarged = DateTime.Now;
 	}
 
 	public async Task HandleValidSubmit()

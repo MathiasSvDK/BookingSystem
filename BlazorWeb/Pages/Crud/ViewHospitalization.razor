@@ -1,5 +1,86 @@
 ﻿@page "/viewhospitalizations"
+@inject UserManager<ApplicationUser> userManager
+<h2 class="align-content-center">Oversigt over antal indlagte per hospital</h2>
+<select @onchange="GetHospitalizations" class="form-control" required>
+	<option value="">Vælg Hospital</option>
+	@foreach (var hospital in hospitals)
+	{
+		<option value="@hospital.Id">@hospital.Name</option>
+	}
+</select>
+@if (Hospitalizations.Count != 0)
+{
+	<table class="table">
+		<thead>
+			<tr>
+				<td>
+					Dato
+				</td>
+				<td>
+					Patient navn
+				</td>
+				<td>
+					Ledige senge @availableBed
+				</td>
+				<td>
+					
+				</td>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in Hospitalizations)
+			{
+				<tr>
+					<td>
+						@item.TimeOfHospitalized
+					</td>
+					<td>
+						@if (Patients != null)
+						{
+							<p>@Patients.FirstOrDefault(p => p.Id == item.PatientId).Firstname @Patients.FirstOrDefault(p => p.Id == item.PatientId).Lastname</p>
+
+						}
+					</td>
+					<td>
+						Indlagt 
+					</td>
+					<td>
+						<td>
+						<a class="btn btn-info" href="/edithospitalization/@item.HospitalizationID">
+							<i class="bi bi-pencil-square"></i>
+						</a>
+					</td>
+					</td>
+				</tr>
+			}
+		</tbody>
+
+	</table>
+}
 
 @code {
 
+	List<Hospitalization> Hospitalizations = new List<Hospitalization>();
+
+	List<Hospital> hospitals = new List<Hospital>();
+
+	Hospital hospital = new Hospital();
+
+	List<ApplicationUser> Patients = new List<ApplicationUser>();
+
+	int availableBed = 0;
+
+	protected override async Task OnInitializedAsync()
+	{
+		hospitals = _hospitalizedRepo.GetAllHospitals().ToList();
+		Patients = userManager.Users.ToList();
+	}
+
+	private async void GetHospitalizations(ChangeEventArgs e)
+	{
+		hospital = hospitals.FirstOrDefault(h => h.Id == Convert.ToInt32(e.Value));
+		Hospitalizations = _hospitalizedRepo.GetHospitalizationsByHospitalId(hospital.Id).Where(h => (h.IsDischarged == false) && (h.TimeOfHospitalized <= DateTime.Now)).OrderBy(h => h.TimeOfHospitalized).ToList();
+
+		availableBed = (int)hospital.Beds - Hospitalizations.Count();
+	}
 }

@@ -24,46 +24,52 @@
 						<span class="oi oi-plus" aria-hidden="true"></span> Booke en tid
 					</NavLink>
 				</div>
-				<div class="nav-item px-3">
-					<NavLink class="nav-link" href="mybookings">
-						<span class="oi oi-calendar" aria-hidden="true"></span> Mine tider
-					</NavLink>
-				</div>
-				<div class="nav-item px-3">
-					<NavLink class="nav-link" href="createavailable">
-						<span class="oi oi-plus" aria-hidden="true"></span> Opret en tid
-					</NavLink>
-				</div>
-				<div class="nav-item px-3">
-					<NavLink class="nav-link" href="createtreatment">
-						<span class="oi oi-plus" aria-hidden="true"></span> Opret en behandling
-					</NavLink>
-				</div>
-				<div class="nav-item px-3">
-					<NavLink class="nav-link" href="createhospitalization">
-						<span class="oi oi-plus" aria-hidden="true"></span> Booke indlæggelse
-					</NavLink>
-				</div>
-				<div class="nav-item px-3">
-					<NavLink class="nav-link" href="viewhospitalizations">
-						<span class="oi oi-plus" aria-hidden="true"></span> Se indlæggelse
-					</NavLink>
-				</div>
-				<div class="nav-item px-3">
-					<NavLink class="nav-link" href="viewbookings">
-						<span class="oi oi-list" aria-hidden="true"></span> Se  bookede undersøgelser
-					</NavLink>
-				</div>
-				<div class="nav-item px-3">
-					<NavLink class="nav-link" href="viewavailables">
-						<span class="oi oi-plus" aria-hidden="true"></span> Se alle tider
-					</NavLink>
-				</div>
-				<div class="nav-item px-3">
-					<NavLink class="nav-link" href="viewtreatments">
-						<span class="oi oi-plus" aria-hidden="true"></span> Se booke indlæggelse
-					</NavLink>
-				</div>
+				@if (User.Role == 3)
+				{
+					<div class="nav-item px-3">
+						<NavLink class="nav-link" href="mybookings">
+							<span class="oi oi-calendar" aria-hidden="true"></span> Mine tider
+						</NavLink>
+					</div>
+				}
+				@if (User.Role != 3)
+				{
+					<div class="nav-item px-3">
+						<NavLink class="nav-link" href="createavailable">
+							<span class="oi oi-plus" aria-hidden="true"></span> Opret en tid
+						</NavLink>
+					</div>
+					<div class="nav-item px-3">
+						<NavLink class="nav-link" href="createtreatment">
+							<span class="oi oi-plus" aria-hidden="true"></span> Opret en behandling
+						</NavLink>
+					</div>
+					<div class="nav-item px-3">
+						<NavLink class="nav-link" href="createhospitalization">
+							<span class="oi oi-plus" aria-hidden="true"></span> Booke indlæggelse
+						</NavLink>
+					</div>
+					<div class="nav-item px-3">
+						<NavLink class="nav-link" href="viewhospitalizations">
+							<span class="oi oi-plus" aria-hidden="true"></span> Se indlæggelse
+						</NavLink>
+					</div>
+					<div class="nav-item px-3">
+						<NavLink class="nav-link" href="viewbookings">
+							<span class="oi oi-list" aria-hidden="true"></span> Se  bookede undersøgelser
+						</NavLink>
+					</div>
+					<div class="nav-item px-3">
+						<NavLink class="nav-link" href="viewavailables">
+							<span class="oi oi-plus" aria-hidden="true"></span> Se alle tider
+						</NavLink>
+					</div>
+					<div class="nav-item px-3">
+						<NavLink class="nav-link" href="viewtreatments">
+							<span class="oi oi-plus" aria-hidden="true"></span> Se booke indlæggelse
+						</NavLink>
+					</div>
+				}
 			</Authorized>
 		</AuthorizeView>
 	</nav>
@@ -73,7 +79,7 @@
 
 
 @code {
-	public ApplicationUser User { get; set; }
+	public ApplicationUser User = new ApplicationUser();
 
 	private bool collapseNavMenu = true;
 

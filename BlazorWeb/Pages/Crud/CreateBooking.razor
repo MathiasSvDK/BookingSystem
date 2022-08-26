@@ -8,11 +8,11 @@
 	<DataAnnotationsValidator />
 	<h4>Booke en tid til undersøgelse</h4>
 	<hr />
-	@if (User.Role == 0)
+	@if (User.Role == 3)
 	{
 		<input hidden @bind-value="booking.PatientId = User.Id"></input>
 	}
-	@if (User.Role != 0)
+	@if (User.Role != 3)
 	{
 		<ValidationMessage For="@(() => booking.PatientId)" />
 		<label class="control-label">Patient</label>
