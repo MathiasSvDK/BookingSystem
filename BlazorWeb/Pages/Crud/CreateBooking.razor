@@ -101,7 +101,7 @@
 	private List<ApplicationUser> Patients = new List<ApplicationUser>();
 	private List<ApplicationUser> Employees = new List<ApplicationUser>();
 
-	public ApplicationUser User { get; set; }
+	public ApplicationUser User = new ApplicationUser();
 
 	protected override async Task OnInitializedAsync()
 	{

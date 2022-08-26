@@ -1,10 +1,15 @@
 ﻿using Datalayer;
 using Datalayer.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Servicelayer.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using SendGrid;
+using SendGrid.Helpers.Mail;
+using System;
+using System.Threading.Tasks;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,10 +19,12 @@ namespace Servicelayer.Repositories
 	{
 		private readonly BookingContext _bookingContext;
 		private readonly IAvailableRepository _availableRepo;
-		public BookingRepository(BookingContext bookingContext, IAvailableRepository availableRepository)
+		private readonly IConfiguration _config;
+		public BookingRepository(BookingContext bookingContext, IAvailableRepository availableRepository, IConfiguration configuration)
 		{
 			_bookingContext = bookingContext;
 			_availableRepo = availableRepository;
+			_config = configuration;
 		}
 
 		public IQueryable<Booking> GetBookingsByPatientId(string patientId)
@@ -64,7 +71,7 @@ namespace Servicelayer.Repositories
 				}
 				else
 				{
-					
+
 					updateBooking.Available = booking.Available;
 				}
 			}
@@ -100,6 +107,18 @@ namespace Servicelayer.Repositories
 				default:
 					break;
 			}
+		}
+
+		public async Task SendEmailAsync(string email, string subject, string plainTextContent, string htmlMessage)
+		{
+			var client = new SendGridClient(_config["Data:ApiKey"]);
+			var from = new EmailAddress(_config["Data:Mail"]);
+
+			var to = new EmailAddress(email);
+
+			var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent ,htmlMessage);
+
+			var response = await client.SendEmailAsync(msg);
 		}
 	}
 }

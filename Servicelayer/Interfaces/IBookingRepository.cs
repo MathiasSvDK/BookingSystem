@@ -11,5 +11,6 @@ namespace Servicelayer.Interfaces
 		IQueryable<Booking> GetBookingsByPatientId(string patientId);
 		Task UpdateBooking(Booking booking);
 		Task UpdateBookingForApi(Booking booking);
+		Task SendEmailAsync(string email, string subject, string plainTextContent, string htmlMessage);
 	}
 }

@@ -84,6 +84,7 @@
 		else
 		{
 			booking.IsApproved = true;
+			await _bookingRepo.SendEmailAsync("amalie2410@gmail.com", "Test", "Test", "idk");
 		}
 		await _bookingRepo.UpdateBooking(booking);
 	}

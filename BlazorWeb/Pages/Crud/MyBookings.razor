@@ -65,7 +65,7 @@
 @code {
 	private List<Booking> bookings = new List<Booking>();
 
-	public ApplicationUser user { get; set; }
+	public ApplicationUser user = new ApplicationUser();
 
 	protected override async Task OnInitializedAsync()
 	{

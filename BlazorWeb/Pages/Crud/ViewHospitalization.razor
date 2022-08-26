@@ -79,7 +79,7 @@
 	private async void GetHospitalizations(ChangeEventArgs e)
 	{
 		hospital = hospitals.FirstOrDefault(h => h.Id == Convert.ToInt32(e.Value));
-		Hospitalizations = _hospitalizedRepo.GetHospitalizationsByHospitalId(hospital.Id).Where(h => (h.IsDischarged == false) && (h.TimeOfHospitalized <= DateTime.Now)).OrderBy(h => h.TimeOfHospitalized).ToList();
+		Hospitalizations = _hospitalizedRepo.GetHospitalizationsByHospitalId(hospital.Id).Where(h => (h.IsDischarged == false) && (h.TimeOfHospitalized.Date <= DateTime.Now.Date)).OrderBy(h => h.TimeOfHospitalized).ToList();
 
 		availableBed = (int)hospital.Beds - Hospitalizations.Count();
 	}
