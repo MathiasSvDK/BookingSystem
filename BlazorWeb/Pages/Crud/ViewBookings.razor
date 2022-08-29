@@ -73,7 +73,7 @@
 
 	protected override void OnInitialized()
 	{
-		bookings = _bookingRepo.GetAllBookings().ToList();
+		bookings = _bookingRepo.GetAllBookings().OrderBy(b => b.Available.Date).ToList();
 		patients = userManager.Users.ToList();
 	}
 

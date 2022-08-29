@@ -1,79 +1,93 @@
 ﻿@inject UserManager<ApplicationUser> userManager
 @inject SignInManager<ApplicationUser> signInManager
 
-<div class="top-row ps-3 navbar navbar-dark">
-	<div class="container-fluid">
-		<a class="navbar-brand" href="">BlazorWeb</a>
+<nav class="navbar">
+	<div class="px-3 navbar-light">
+		<a class="navbar-brand" href="">Booking</a>
 		<button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
 			<span class="navbar-toggler-icon"></span>
 		</button>
 	</div>
-</div>
 
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-	<nav class="flex-column">
-		<AuthorizeView>
-			<Authorized>
-				<div class="nav-item px-3">
-					<NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-						<span class="oi oi-home" aria-hidden="true"></span> Home
-					</NavLink>
-				</div>
-				<div class="nav-item px-3">
-					<NavLink class="nav-link" href="createbooking">
-						<span class="oi oi-plus" aria-hidden="true"></span> Booke en tid
-					</NavLink>
-				</div>
-				@if (User.Role == 3)
-				{
-					<div class="nav-item px-3">
-						<NavLink class="nav-link" href="mybookings">
-							<span class="oi oi-calendar" aria-hidden="true"></span> Mine tider
+	<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+		<div class="navbar">
+			<AuthorizeView>
+				<Authorized>
+					<div class="nav-item">
+						<NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+							<span class="bi bi-house-door-fill" aria-hidden="true"></span> Home
 						</NavLink>
 					</div>
-				}
-				@if (User.Role != 3)
-				{
-					<div class="nav-item px-3">
-						<NavLink class="nav-link" href="createavailable">
-							<span class="oi oi-plus" aria-hidden="true"></span> Opret en tid
+					<div class="nav-item">
+						<NavLink class="nav-link" href="createbooking">
+							<span class="bi bi-calendar-plus-fill" aria-hidden="true"></span> Booke en tid
 						</NavLink>
 					</div>
-					<div class="nav-item px-3">
-						<NavLink class="nav-link" href="createtreatment">
-							<span class="oi oi-plus" aria-hidden="true"></span> Opret en behandling
+					@if (User.Role == 3)
+					{
+						<div class="nav-item">
+							<NavLink class="nav-link" href="mybookings">
+								<span class="bi bi-calendar2-week-fill" aria-hidden="true"></span> Mine tider
+							</NavLink>
+						</div>
+					}
+					@if (User.Role != 3)
+					{
+						<div class="nav-item">
+							<NavLink class="nav-link" href="createavailable">
+								<span class="bi bi-clipboard2-plus-fill" aria-hidden="true"></span> Opret en tid
+							</NavLink>
+						</div>
+						<div class="nav-item">
+							<NavLink class="nav-link" href="createtreatment">
+								<span class="bi bi-clipboard2-plus-fill" aria-hidden="true"></span> Opret en behandling
+							</NavLink>
+						</div>
+						<div class="nav-item">
+							<NavLink class="nav-link" href="createhospitalization">
+								<span class="bi bi-calendar-plus-fill" aria-hidden="true"></span> Booke indlæggelser
+							</NavLink>
+						</div>
+						<div class="nav-item">
+							<NavLink class="nav-link" href="viewhospitalizations">
+								<span class="bi bi-card-list" aria-hidden="true"></span> Se indlæggelse
+							</NavLink>
+						</div>
+						<div class="nav-item">
+							<NavLink class="nav-link" href="viewbookings">
+								<span class="bi bi-card-list" aria-hidden="true"></span> Se bookede undersøgelser
+							</NavLink>
+						</div>
+						<div class="nav-item">
+							<NavLink class="nav-link" href="viewavailables">
+								<span class="bi bi-card-list" aria-hidden="true"></span> Se alle tider
+							</NavLink>
+						</div>
+						<div class="nav-item">
+							<NavLink class="nav-link" href="viewtreatments">
+								<span class="bi bi-card-list" aria-hidden="true"></span> Se alle behandlinger
+							</NavLink>
+						</div>
+					}
+					<div class="nav-item">
+						Hej @User.Firstname @User.Lastname
+					</div>
+
+					<div class="nav-item">
+						<NavLink class="nav-link" href="Identity/Account/LogOut">
+							<span class="btn bi bi-box-arrow-right"></span> Log ud
 						</NavLink>
 					</div>
-					<div class="nav-item px-3">
-						<NavLink class="nav-link" href="createhospitalization">
-							<span class="oi oi-plus" aria-hidden="true"></span> Booke indlæggelse
-						</NavLink>
-					</div>
-					<div class="nav-item px-3">
-						<NavLink class="nav-link" href="viewhospitalizations">
-							<span class="oi oi-plus" aria-hidden="true"></span> Se indlæggelse
-						</NavLink>
-					</div>
-					<div class="nav-item px-3">
-						<NavLink class="nav-link" href="viewbookings">
-							<span class="oi oi-list" aria-hidden="true"></span> Se  bookede undersøgelser
-						</NavLink>
-					</div>
-					<div class="nav-item px-3">
-						<NavLink class="nav-link" href="viewavailables">
-							<span class="oi oi-plus" aria-hidden="true"></span> Se alle tider
-						</NavLink>
-					</div>
-					<div class="nav-item px-3">
-						<NavLink class="nav-link" href="viewtreatments">
-							<span class="oi oi-plus" aria-hidden="true"></span> Se alle behandlinger
-						</NavLink>
-					</div>
-				}
-			</Authorized>
-		</AuthorizeView>
-	</nav>
-</div>
+
+				</Authorized>
+				<NotAuthorized>
+					<a href="Identity/Account/Login">Log in</a>
+				</NotAuthorized>
+			</AuthorizeView>
+		</div>
+	</div>
+</nav>
+
 
 @code {
 	public ApplicationUser User = new ApplicationUser();
