@@ -4,39 +4,44 @@
 @inject SignInManager<ApplicationUser> signInManager
 @attribute [Authorize]
 
-@if (signInManager.Context.User.Claims.Where(c => c.Type == "gruppe").FirstOrDefault().Value != "3")
-{
+<div class="d-flex justify-content-center">
+	<div class="col-9 form-group">
+		@if (signInManager.Context.User.Claims.Where(c => c.Type == "gruppe").FirstOrDefault().Value != "3")
+		{
 
-	<EditForm Model="@available" OnValidSubmit="HandleValidSubmit">
-		<DataAnnotationsValidator />
-		<h4>Redigere tidspunkt</h4>
-		<hr />
-		<ValidationMessage For="@(() => available.Date)" />
-		<label class="control-label">Dato</label>
-		<RadzenDatePicker @bind-Value="available.Date" ShowTime="true" HoursStep="1" MinutesStep="5" Change=@(args => OnChange(args, "DatePicker with time", "dd/MM/yyyy HH:mm")) DateFormat="dd/MM/yyyy HH:mm" Class="form-control" />
+			<EditForm Model="@available" OnValidSubmit="HandleValidSubmit">
+				<DataAnnotationsValidator />
+				<h4 class="text-center">Redigere tidspunkt</h4>
+				<hr />
+				<ValidationMessage For="@(() => available.Date)" />
+				<label class="control-label">Dato</label>
+				<RadzenDatePicker @bind-Value="available.Date" ShowTime="true" HoursStep="1" MinutesStep="5" Change=@(args => OnChange(args, "DatePicker with time", "dd/MM/yyyy HH:mm")) DateFormat="dd/MM/yyyy HH:mm" Class="form-control" />
 
-		<ValidationMessage For="@(() => available.EmployeeId)" />
-		<label class="control-label">Tid</label>
-		<select class="form-control" required @bind="available.EmployeeId">
-			<option value="">Vælg en Læge/sygepjeleske</option>
-			@if (Employees == null)
-			{
-				<option>Loading..</option>
-			}
-			else
-			{
-				@foreach (var employee in Employees)
-				{
-					<option value="@employee.Id">@employee.Firstname @employee.Lastname</option>
-				}
-			}
-		</select>
+				<ValidationMessage For="@(() => available.EmployeeId)" />
+				<label class="control-label">Tid</label>
+				<select class="form-control" required @bind="available.EmployeeId">
+					<option value="">Vælg en Læge/sygepjeleske</option>
+					@if (Employees == null)
+					{
+						<option>Loading..</option>
+					}
+					else
+					{
+						@foreach (var employee in Employees)
+						{
+							<option value="@employee.Id">@employee.Firstname @employee.Lastname</option>
+						}
+					}
+				</select>
 
-		<button class="btn btn-success">Gem</button>
-		<a href="/" class="btn btn-secondary">Annuller</a>
+				<br>
+				<button class="btn btn-success">Gem</button>
+				<a href="/" class="btn btn-secondary">Annuller</a>
 
-	</EditForm>
-}
+			</EditForm>
+		}
+	</div>
+</div>
 
 @code {
 	[Parameter]

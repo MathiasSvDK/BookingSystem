@@ -3,23 +3,27 @@
 @inject UserManager<ApplicationUser> userManager
 @inject SignInManager<ApplicationUser> signInManager
 
+<div class="d-flex justify-content-center">
+	<div class="col-9 form-group">
+		<EditForm Model="@treatment" OnValidSubmit="HandleValidSubmit">
+			<DataAnnotationsValidator />
+			<h4 class="text-center">Redigere @treatment.TreatmentName</h4>
+			<hr />
+			<ValidationMessage For="@(() => treatment.TreatmentName)" />
+			<label class="control-label">Behandling</label>
+			<input placeholder="f. eks blodprøve" class="form-control" @bind-value="treatment.TreatmentName" />
 
-<EditForm Model="@treatment" OnValidSubmit="HandleValidSubmit">
-	<DataAnnotationsValidator />
-	<h4>Redigere @treatment.TreatmentName</h4>
-	<hr />
-	<ValidationMessage For="@(() => treatment.TreatmentName)" />
-	<label class="control-label">Behandling</label>
-	<input placeholder="f. eks blodprøve" class="form-control" @bind-value="treatment.TreatmentName" />
+			<ValidationMessage For="@(() => treatment.TreatmentName)" />
+			<label class="control-label">Beskrivelse</label>
+			<textarea placeholder="Beskrivelse" class="form-control" @bind="treatment.Description" />
 
-	<ValidationMessage For="@(() => treatment.TreatmentName)" />
-	<label class="control-label">Beskrivelse</label>
-	<textarea placeholder="Beskrivelse" class="form-control" @bind="treatment.Description" />
+			<br />
+			<button class="btn btn-success">Gem</button>
+			<a href="/" class="btn btn-secondary">Annuller</a>
 
-	<button class="btn btn-success">Gem</button>
-	<a href="/" class="btn btn-secondary">Annuller</a>
-
-</EditForm>
+		</EditForm>
+	</div>
+</div>
 
 @code {
 	[Parameter]

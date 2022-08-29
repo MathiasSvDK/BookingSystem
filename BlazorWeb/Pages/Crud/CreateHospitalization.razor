@@ -4,65 +4,68 @@
 @inject SignInManager<ApplicationUser> signInManager
 @attribute [Authorize]
 
-@if (user.Role != 3)
-{
-	<EditForm Model="@hospitalization" OnValidSubmit="HandleValidSubmit">
+<div class="d-flex justify-content-center">
+	<div class="col-9 form-group">
+		@if (user.Role != 3)
+		{
+			<EditForm Model="@hospitalization" OnValidSubmit="HandleValidSubmit">
 
-		<h4>Opret en indlæggelse</h4>
-		<hr />
+				<h4 class="text-center">Opret en indlæggelse</h4>
+				<hr />
 
-		<ValidationMessage For="@(() => hospitalization.PatientId)" />
-		<label class="control-label">Patient</label>
-		<select class="form-control" required @bind="hospitalization.PatientId">
-			<option value="">Vælg Patient</option>
-			@if (patients == null)
-			{
-				<option>Loading..</option>
-			}
-			else
-			{
-				@foreach (var patient in patients.OrderBy(p => p.Firstname).ThenBy(p => p.Lastname))
-				{
-					<option value="@patient.Id">@patient.Firstname @patient.Lastname</option>
-				}
-			}
-		</select>
+				<ValidationMessage For="@(() => hospitalization.PatientId)" />
+				<label class="control-label">Patient</label>
+				<select class="form-control" required @bind="hospitalization.PatientId">
+					<option value="">Vælg Patient</option>
+					@if (patients == null)
+					{
+						<option>Loading..</option>
+					}
+					else
+					{
+						@foreach (var patient in patients.OrderBy(p => p.Firstname).ThenBy(p => p.Lastname))
+						{
+							<option value="@patient.Id">@patient.Firstname @patient.Lastname</option>
+						}
+					}
+				</select>
 
-		<ValidationMessage For="@(() => hospitalization.Reason)" />
-		<label class="control-label">Begrundelse for indlæggelse</label>
-		<input placeholder="Begrundelse for indlæggelse" class="form-control" @bind-value="hospitalization.Reason" />
+				<ValidationMessage For="@(() => hospitalization.Reason)" />
+				<label class="control-label">Begrundelse for indlæggelse</label>
+				<input placeholder="Begrundelse for indlæggelse" class="form-control" @bind-value="hospitalization.Reason" />
 
-		<ValidationMessage For="@(() => hospitalization.TimeOfHospitalized)" />
-		<label class="control-label">Dato for indlæggelse</label>
-		<RadzenDatePicker Min="DateTime.Now" @bind-Value="hospitalization.TimeOfHospitalized" ShowTime="true" HoursStep="1" MinutesStep="5" Change=@(args => OnChange(args, "DatePicker with time", "dd/MM/yyyy HH:mm")) DateFormat="dd/MM/yyyy HH:mm" Class="form-control">
-			<FooterTemplate>
-				<RadzenButton Click=@OnTodayClick Text="Today" />
-			</FooterTemplate>
-		</RadzenDatePicker>
+				<ValidationMessage For="@(() => hospitalization.TimeOfHospitalized)" />
+				<label class="control-label">Dato for indlæggelse</label>
+				<RadzenDatePicker Min="DateTime.Now" @bind-Value="hospitalization.TimeOfHospitalized" ShowTime="true" HoursStep="1" MinutesStep="5" Change=@(args => OnChange(args, "DatePicker with time", "dd/MM/yyyy HH:mm")) DateFormat="dd/MM/yyyy HH:mm" Class="form-control">
+					<FooterTemplate>
+						<RadzenButton Click=@OnTodayClick Text="Today" />
+					</FooterTemplate>
+				</RadzenDatePicker>
 
-		<ValidationMessage For="@(() => hospitalization.HospitalId)" />
-		<label class="control-label">Hospital</label>
-		<select class="form-control" required @bind=" hospitalization.HospitalId">
-			<option value="">Vælg Hospital</option>
-			@if (patients == null)
-			{
-				<option>Loading..</option>
-			}
-			else
-			{
-				@foreach (var hospital in hospitals.OrderBy(h => h.Name))
-				{
-					<option value="@hospital.Id">@hospital.Name</option>
-				}
-			}
-		</select>
-		<br />
-		<button class="btn btn-success">Opret</button>
-		<a href="/" class="btn btn-secondary">Annuller</a>
+				<ValidationMessage For="@(() => hospitalization.HospitalId)" />
+				<label class="control-label">Hospital</label>
+				<select class="form-control" required @bind=" hospitalization.HospitalId">
+					<option value="">Vælg Hospital</option>
+					@if (patients == null)
+					{
+						<option>Loading..</option>
+					}
+					else
+					{
+						@foreach (var hospital in hospitals.OrderBy(h => h.Name))
+						{
+							<option value="@hospital.Id">@hospital.Name</option>
+						}
+					}
+				</select>
+				<br />
+				<button class="btn btn-success">Opret</button>
+				<a href="/" class="btn btn-secondary">Annuller</a>
 
-	</EditForm>
-}
-
+			</EditForm>
+		}
+	</div>
+</div>
 
 
 @code {

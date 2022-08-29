@@ -4,100 +4,104 @@
 @inject SignInManager<ApplicationUser> signInManager
 @attribute [Authorize]
 
-@if (booking != null)
-{
-	@if (booking.PatientId == User.Id || User.Role != 3)
-	{
-		<EditForm Model="@booking" OnValidSubmit="HandleValidSubmit">
-			<DataAnnotationsValidator />
-			<h4>Redigere en Booking</h4>
-			<hr />
-			@if (User.Role == 3)
+
+<div class="d-flex justify-content-center">
+	<div class="col-9 form-group">
+		@if (booking != null)
+		{
+			@if (booking.PatientId == User.Id || User.Role != 3)
 			{
-				<input hidden @bind-value="booking.PatientId"></input>
-			}
-			@if (User.Role != 3)
-			{
-				<label class="control-label">Patient</label>
-				<select class="form-control" required @bind="booking.PatientId">
-					<option selected value="@Patient.Id">@Patient.Firstname @Patient.Lastname</option>
-					@if (Patients == null)
+				<EditForm Model="@booking" OnValidSubmit="HandleValidSubmit">
+					<DataAnnotationsValidator />
+					<h4 class="text-center">Redigere en Booking</h4>
+					<hr />
+					@if (User.Role == 3)
 					{
-						<option>Loading..</option>
+						<input hidden @bind-value="booking.PatientId"></input>
+					}
+					@if (User.Role != 3)
+					{
+						<label class="control-label">Patient</label>
+						<select class="form-control" required @bind="booking.PatientId">
+							<option selected value="@Patient.Id">@Patient.Firstname @Patient.Lastname</option>
+							@if (Patients == null)
+							{
+								<option>Loading..</option>
+							}
+							else
+							{
+								@foreach (var patient in Patients.OrderBy(p => p.Firstname).ThenBy(p => p.Lastname))
+								{
+									<option value="@patient.Id">@patient.Firstname @patient.Lastname</option>
+								}
+							}
+						</select>
+					}
+					<ValidationMessage For="@(() => booking.TreatmentId)" />
+					<label class="control-label">Behandling</label>
+
+					<select class="form-control" required @bind="booking.TreatmentId">
+						<option value="">Vælg Behandling</option>
+						@if (treatments == null)
+						{
+							<option>Loading..</option>
+						}
+						else
+						{
+							@foreach (var treatment in treatments)
+							{
+								<option value="@treatment.TreatmentId">@treatment.TreatmentName</option>
+							}
+						}
+					</select>
+
+					<ValidationMessage For="@(() => booking.Reason)" />
+					<label class="control-label">Begrundelse for behandling</label>
+					<input placeholder="Begrundelse for behandling" class="form-control" @bind-value="booking.Reason" />
+
+					<label class="control-label">Læge/sygepjeleske</label>
+					<select @onchange="GetAvailable" class="form-control" required>
+						<option value="">Vælg en Læge/sygepjeleske</option>
+						<option selected value="@Employee.Id">@Employee.Firstname @Employee.Lastname</option>
+						@if (Employees == null)
+						{
+							<option>Loading..</option>
+						}
+						else
+						{
+							@foreach (var employee in Employees.OrderBy(e => e.Firstname).ThenBy(e => e.Lastname))
+							{
+								<option value="@employee.Id">@employee.Firstname @employee.Lastname</option>
+							}
+						}
+					</select>
+
+					@if (availables.Count != 0)
+					{
+						<ValidationMessage For="@(() => booking.AvailableId)" />
+						<label class="control-label">Tid</label>
+						<select class="form-control" required @bind="booking.AvailableId">
+							<option value="">Vælg en Tid</option>
+							@foreach (var available in availables)
+							{
+								<option value="@available.AvailableId">@available.Date</option>
+							}
+						</select>
 					}
 					else
 					{
-						@foreach (var patient in Patients.OrderBy(p => p.Firstname).ThenBy(p => p.Lastname))
-						{
-							<option value="@patient.Id">@patient.Firstname @patient.Lastname</option>
-						}
+						<label>Denne Læge/sygepjeleske har ikke nogle ledige tider</label>
+						<br />
 					}
-				</select>
+					<br />
+					<button class="btn btn-success">Gem</button>
+					<a href="/" class="btn btn-secondary">Annuller</a>
+
+				</EditForm>
 			}
-			<ValidationMessage For="@(() => booking.TreatmentId)" />
-			<label class="control-label">Behandling</label>
-
-			<select class="form-control" required @bind="booking.TreatmentId">
-				<option value="">Vælg Behandling</option>
-				@if (treatments == null)
-				{
-					<option>Loading..</option>
-				}
-				else
-				{
-					@foreach (var treatment in treatments)
-					{
-						<option value="@treatment.TreatmentId">@treatment.TreatmentName</option>
-					}
-				}
-			</select>
-
-			<ValidationMessage For="@(() => booking.Reason)" />
-			<label class="control-label">Begrundelse for behandling</label>
-			<input placeholder="Begrundelse for behandling" class="form-control" @bind-value="booking.Reason" />
-
-			<label class="control-label">Læge/sygepjeleske</label>
-			<select @onchange="GetAvailable" class="form-control" required>
-				<option value="">Vælg en Læge/sygepjeleske</option>
-				<option selected value="@Employee.Id">@Employee.Firstname @Employee.Lastname</option>
-				@if (Employees == null)
-				{
-					<option>Loading..</option>
-				}
-				else
-				{
-					@foreach (var employee in Employees.OrderBy(e => e.Firstname).ThenBy(e => e.Lastname))
-					{
-						<option value="@employee.Id">@employee.Firstname @employee.Lastname</option>
-					}
-				}
-			</select>
-
-			@if (availables.Count != 0)
-			{
-				<ValidationMessage For="@(() => booking.AvailableId)" />
-				<label class="control-label">Tid</label>
-				<select class="form-control" required @bind="booking.AvailableId">
-					<option value="">Vælg en Tid</option>
-					@foreach (var available in availables)
-					{
-						<option value="@available.AvailableId">@available.Date</option>
-					}
-				</select>
-			}
-			else
-			{
-				<label>Denne Læge/sygepjeleske har ikke nogle ledige tider</label>
-				<br />
-			}
-			<br />
-			<button class="btn btn-success">Gem</button>
-			<a href="/" class="btn btn-secondary">Annuller</a>
-
-		</EditForm>
-	}
-}
-
+		}
+	</div>
+</div>
 
 
 @code {

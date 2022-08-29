@@ -4,42 +4,48 @@
 @inject SignInManager<ApplicationUser> signInManager
 @attribute [Authorize]
 
-@if (signInManager.Context.User.Claims.Where(c => c.Type == "gruppe").FirstOrDefault().Value != "3")
-{
-	<EditForm Model="@available" OnValidSubmit="HandleValidSubmit">
-		<DataAnnotationsValidator />
-		<h4>Opret en Tid</h4>
-		<hr />
-		<ValidationMessage For="@(() => available.Date)" />
-		<label class="control-label">Dato</label>
-		<RadzenDatePicker Min="DateTime.Now" @bind-Value="available.Date" ShowTime="true" HoursStep="1" MinutesStep="5" Change=@(args => OnChange(args, "DatePicker with time", "dd/MM/yyyy HH:mm")) DateFormat="dd/MM/yyyy HH:mm" Class="form-control">
-			<FooterTemplate>
-				<RadzenButton Click=@OnTodayClick Text="Today" />
-			</FooterTemplate>
-		</RadzenDatePicker>
+<div class="d-flex justify-content-center">
+	<div class="col-9 form-group">
+		@if (signInManager.Context.User.Claims.Where(c => c.Type == "gruppe").FirstOrDefault().Value != "3")
+		{
+			<EditForm Model="@available" OnValidSubmit="HandleValidSubmit">
+				<DataAnnotationsValidator />
+				<h4 class="text-center">Opret en Tid</h4>
+				<hr />
+				<ValidationMessage For="@(() => available.Date)" />
+				<label class="control-label">Dato</label>
+				<RadzenDatePicker Min="DateTime.Now" @bind-Value="available.Date" ShowTime="true" HoursStep="1" MinutesStep="5" Change=@(args => OnChange(args, "DatePicker with time", "dd/MM/yyyy HH:mm")) DateFormat="dd/MM/yyyy HH:mm" Class="form-control">
+					<FooterTemplate>
+						<RadzenButton Click=@OnTodayClick Text="Today" />
+					</FooterTemplate>
+				</RadzenDatePicker>
 
-		<ValidationMessage For="@(() => available.EmployeeId)" />
-		<label class="control-label">Tid</label>
-		<select class="form-control" required @bind="available.EmployeeId">
-			<option value="">Vælg en Læge/sygepjeleske</option>
-			@if (Employees == null)
-			{
-				<option>Loading..</option>
-			}
-			else
-			{
-				@foreach (var employee in Employees)
-				{
-					<option value="@employee.Id">@employee.Firstname @employee.Lastname</option>
-				}
-			}
-		</select>
+				<ValidationMessage For="@(() => available.EmployeeId)" />
+				<label class="control-label">Tid</label>
+				<select class="form-control" required @bind="available.EmployeeId">
+					<option value="">Vælg en Læge/sygepjeleske</option>
+					@if (Employees == null)
+					{
+						<option>Loading..</option>
+					}
+					else
+					{
+						@foreach (var employee in Employees)
+						{
+							<option value="@employee.Id">@employee.Firstname @employee.Lastname</option>
+						}
+					}
+				</select>
+				<br>
+				<button class="btn btn-success">Opret</button>
+				<a href="/" class="btn btn-secondary">Annuller</a>
 
-		<button class="btn btn-success">Opret</button>
-		<a href="/" class="btn btn-secondary">Annuller</a>
+			</EditForm>
+		}
+	</div>
+</div>
 
-	</EditForm>
-}
+
 
 @code {
 	Available available = new Available();
