@@ -69,10 +69,12 @@
 
 @code {
 	private List<Booking> bookings = new List<Booking>();
+	List<ApplicationUser> patients = new List<ApplicationUser>();
 
 	protected override void OnInitialized()
 	{
 		bookings = _bookingRepo.GetAllBookings().ToList();
+		patients = userManager.Users.ToList();
 	}
 
 	private async Task UpdatdeBookingIsApproved(Booking booking, bool IsChecked)
@@ -84,9 +86,10 @@
 		else
 		{
 			booking.IsApproved = true;
-			await _bookingRepo.SendEmailAsync("amalie2410@gmail.com", "Test", "Test", "idk");
+			await _bookingRepo.SendEmailAsync("amalie2410@gmail.com", $"Booking af undersøgelse er godkendt", "", $"<html><body><H3>{patients.FirstOrDefault(p => p.Id == booking.PatientId).Firstname} {patients.FirstOrDefault(p => p.Id == booking.PatientId).Firstname}</H3><h3>{patients.FirstOrDefault(p => p.Id == booking.PatientId).Address}</h3><h1>Indkaldelse til undersøglese</h1><p>Du er blev indkaldt til en undersøgelse den {booking.Available.Date}</p><p>Hvis du ikke kan komme bedes du afmelde 24 timer inden.</p></body></html>");
 		}
 		await _bookingRepo.UpdateBooking(booking);
+		bookings = _bookingRepo.GetAllBookings().ToList();
 	}
 
 	public async Task deleteOnClick(int bookingId)
@@ -97,7 +100,7 @@
 		{
 			await _bookingRepo.DeleteBooking(bookingId);
 			toastService.ShowSuccess("Booking blev fjernet");
-			NavigationManager.NavigateTo("/viewbookings");
+			bookings = _bookingRepo.GetAllBookings().ToList();
 		}
 	}
 }
