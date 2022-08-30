@@ -30,7 +30,7 @@ Gets all available times that is not taken
 - GetAllTreatments()
 Gets all treatments 
 
-**/api/booking**
+**route /api/booking**
 - CreateBooking()
 Create a booking 
 
