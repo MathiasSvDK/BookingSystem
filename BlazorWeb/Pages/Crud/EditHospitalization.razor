@@ -42,7 +42,7 @@
 				<label class="control-label">Hospital</label>
 				<select class="form-control" required @bind=" hospitalization.HospitalId">
 					<option value="">Vælg Hospital</option>
-					@if (patients == null)
+					@if (hospitals == null)
 					{
 						<option>Loading..</option>
 					}
