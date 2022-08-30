@@ -39,7 +39,7 @@ Create a booking
 
 Updates the booking
 
-**route /api/booking**
+**route /api/booking/{booking_Id}**
 - DeleteBooking()
 
 Deletes the booking
