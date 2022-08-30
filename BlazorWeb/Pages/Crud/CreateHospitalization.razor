@@ -15,20 +15,19 @@
 
 				<ValidationMessage For="@(() => hospitalization.PatientId)" />
 				<label class="control-label">Patient</label>
-				<select class="form-control" required @bind="hospitalization.PatientId">
-					<option value="">Vælg Patient</option>
-					@if (patients == null)
-					{
-						<option>Loading..</option>
-					}
-					else
-					{
-						@foreach (var patient in patients.OrderBy(p => p.Firstname).ThenBy(p => p.Lastname))
-						{
-							<option value="@patient.Id">@patient.Firstname @patient.Lastname</option>
-						}
-					}
-				</select>
+				<div class="input-group">
+					<input required placeholder="Indtast cpr nummer" @bind="patient.UserName" class="form-control">
+					<div class="input-group-append">
+						<button type="button" @onclick="GetPatient" class="btn btn-outline-secondary">
+							<i class="bi bi-search"></i>
+						</button>
+					</div>
+				</div>
+				@if (patient.Firstname != null)
+				{
+					<label class="control-label">Patienten er: @patient.Firstname @patient.Lastname</label>
+					<br />
+				}
 
 				<ValidationMessage For="@(() => hospitalization.Reason)" />
 				<label class="control-label">Begrundelse for indlæggelse</label>
@@ -73,7 +72,7 @@
 
 	public ApplicationUser user = new ApplicationUser();
 
-	private List<ApplicationUser> patients = new List<ApplicationUser>();
+	private ApplicationUser patient = new ApplicationUser();
 
 	private List<Hospital> hospitals = new List<Hospital>();
 
@@ -82,10 +81,6 @@
 		hospitals = _hospitalizedRepo.GetAllHospitals().ToList();
 
 		user = await userManager.GetUserAsync(signInManager.Context.User);
-
-		List<ApplicationUser> applicationUsers = userManager.Users.ToList();
-
-		patients.AddRange(applicationUsers.Where(e => e.Role == 3));
 
 		hospitalization.TimeOfHospitalized = DateTime.Now;
 	}
@@ -97,6 +92,20 @@
 	void OnTodayClick()
 	{
 		hospitalization.TimeOfHospitalized = DateTime.Now;
+	}
+
+	private async Task GetPatient()
+	{
+		patient = await userManager.FindByNameAsync(patient.UserName);
+		@if (patient != null)
+		{
+			hospitalization.PatientId = patient.Id;
+		}
+		else
+		{
+			patient = new ApplicationUser();
+			toastService.ShowError("Kunne ikke find en patient med dette cpr nummer");
+		}
 	}
 
 	public async Task HandleValidSubmit()
