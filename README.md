@@ -11,7 +11,7 @@ Gets all bookings for that patient
 
 Gets the booking via the booking id
 
-*route /api/booking/**
+**route /api/booking/**
 - GetAllBookings()
 
 Gets all bookings
