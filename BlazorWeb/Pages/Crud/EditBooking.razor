@@ -11,7 +11,7 @@
 		{
 			@if (booking.PatientId == User.Id || User.Role != 3)
 			{
-				<EditForm Model="@booking" OnValidSubmit="HandleValidSubmit">
+				<EditForm Model="@booking">
 					<DataAnnotationsValidator />
 					<h4 class="text-center">Redigere en Booking</h4>
 					<hr />
@@ -21,21 +21,21 @@
 					}
 					@if (User.Role != 3)
 					{
+						<ValidationMessage For="@(() => booking.PatientId)" />
 						<label class="control-label">Patient</label>
-						<select class="form-control" required @bind="booking.PatientId">
-							<option selected value="@Patient.Id">@Patient.Firstname @Patient.Lastname</option>
-							@if (Patients == null)
-							{
-								<option>Loading..</option>
-							}
-							else
-							{
-								@foreach (var patient in Patients.OrderBy(p => p.Firstname).ThenBy(p => p.Lastname))
-								{
-									<option value="@patient.Id">@patient.Firstname @patient.Lastname</option>
-								}
-							}
-						</select>
+						<div class="input-group">
+							<input required placeholder="Indtast cpr nummer" @bind="patient.UserName" class="form-control">
+							<div class="input-group-append">
+								<button type="button" @onclick="GetPatient" class="btn btn-outline-secondary">
+									<i class="bi bi-search"></i>
+								</button>
+							</div>
+						</div>
+						@if (patient.Firstname != null)
+						{
+							<label class="control-label">Patienten er: @patient.Firstname @patient.Lastname</label>
+							<br />
+						}
 					}
 					<ValidationMessage For="@(() => booking.TreatmentId)" />
 					<label class="control-label">Behandling</label>
@@ -94,7 +94,7 @@
 						<br />
 					}
 					<br />
-					<button class="btn btn-success">Gem</button>
+					<button type="submit" @onclick="HandleValidSubmit" class="btn btn-success">Gem</button>
 					<a href="/" class="btn btn-secondary">Annuller</a>
 
 				</EditForm>
@@ -115,10 +115,9 @@
 	private Booking booking;
 	private List<Available> availables = new List<Available>();
 	private List<Treatment> treatments = new List<Treatment>();
-	public List<ApplicationUser> Patients = new List<ApplicationUser>();
 	private List<ApplicationUser> Employees = new List<ApplicationUser>();
 	private ApplicationUser Employee = new ApplicationUser();
-	private ApplicationUser Patient = new ApplicationUser();
+	private ApplicationUser patient = new ApplicationUser();
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -127,15 +126,13 @@
 		oldAvailable = booking.Available;
 		oldTreatment = booking.Treatment;
 		Employee = await userManager.FindByIdAsync(oldAvailable.EmployeeId);
-		Patient = await userManager.FindByIdAsync(booking.PatientId);
+		patient = await userManager.FindByIdAsync(booking.PatientId);
 
 		availables.Add(oldAvailable);
 		availables.AddRange(_availableRepo.GetAllAvailablesNotTaken().Where(a => a.EmployeeId == Employee.Id).ToList());
 		treatments = _treatmentRepo.GetAllTreatments().ToList();
 
 		List<ApplicationUser> applicationUsers = userManager.Users.ToList();
-
-		Patients.AddRange(applicationUsers.Where(e => e.Role == 3));
 
 		Employees.AddRange(applicationUsers.Where(e => e.Role != 3));
 		Employees.Remove(Employee);
@@ -159,6 +156,20 @@
 			}
 		}
 
+	}
+
+	private async Task GetPatient()
+	{
+		patient = await userManager.FindByNameAsync(patient.UserName);
+		@if (patient != null)
+		{
+			booking.PatientId = patient.Id;
+		}
+		else
+		{
+			patient = new ApplicationUser();
+			toastService.ShowError("Kunne ikke find en patient med dette cpr nummer");
+		}
 	}
 
 	public async Task HandleValidSubmit()

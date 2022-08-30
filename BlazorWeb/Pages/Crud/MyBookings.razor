@@ -71,6 +71,6 @@
 	{
 		user = await userManager.GetUserAsync(signInManager.Context.User);
 
-		bookings = _bookingRepo.GetBookingsByPatientId(user.Id).ToList();
+		bookings = _bookingRepo.GetBookingsByPatientId(user.Id).Where(b => b.Available.Date.Date >= DateTime.Now.Date).ToList();
 	}
 }

@@ -1,19 +1,8 @@
 ﻿@page "/"
 @attribute [Authorize]
 
-@if (booking != null)
-{
-	@booking.Reason
-}
-
+<h1 class="text-center">Velkommen til Sygehus Sønderjylland</h1>
 
 @code {
-	Booking booking { get; set; }
-
-	protected override async Task OnInitializedAsync()
-	{
-		booking = await _bookingRepo.GetBookingByBookingId(1);
-
-
-	}
+	
 }

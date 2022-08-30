@@ -20,10 +20,18 @@ namespace BlazorWeb.Controller
 			_treatmentRepo = treatmentRepo;
 		}
 
-		[HttpGet("{id}")]
+		[Route("patient/{id}")]
+		[HttpGet]
 		public async Task<ICollection<Booking>> GetBookingsByPatientId(string Id)
 		{
 			return _bookingRepo.GetBookingsByPatientId(Id).ToList();
+		}
+
+
+		[HttpGet("{id}")]
+		public async Task<Booking> GetBookingByBookingId(int Id)
+		{
+			return await _bookingRepo.GetBookingByBookingId(Id);
 		}
 
 		[HttpGet]

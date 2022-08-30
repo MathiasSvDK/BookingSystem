@@ -14,11 +14,7 @@
 				<hr />
 				<ValidationMessage For="@(() => available.Date)" />
 				<label class="control-label">Dato</label>
-				<RadzenDatePicker Min="DateTime.Now" @bind-Value="available.Date" ShowTime="true" HoursStep="1" MinutesStep="5" Change=@(args => OnChange(args, "DatePicker with time", "dd/MM/yyyy HH:mm")) DateFormat="dd/MM/yyyy HH:mm" Class="form-control">
-					<FooterTemplate>
-						<RadzenButton Click=@OnTodayClick Text="Today" />
-					</FooterTemplate>
-				</RadzenDatePicker>
+				<RadzenDatePicker Min="DateTime.Now" @bind-Value="available.Date" ShowTime="true" HoursStep="1" MinutesStep="5" Change=@(args => OnChange(args, "DatePicker with time", "dd/MM/yyyy HH:mm")) DateFormat="dd/MM/yyyy HH:mm" Class="form-control"/>
 
 				<ValidationMessage For="@(() => available.EmployeeId)" />
 				<label class="control-label">Tid</label>
@@ -58,6 +54,8 @@
 		List<ApplicationUser> applicationUsers = userManager.Users.ToList();
 
 		Employees.AddRange(applicationUsers.Where(e => e.Role != 3));
+
+		available.Date = DateTime.UtcNow;
 	}
 
 	void OnChange(DateTime? value, string name, string format)
