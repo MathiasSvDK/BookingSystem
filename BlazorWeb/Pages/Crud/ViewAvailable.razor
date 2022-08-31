@@ -6,68 +6,47 @@
 
 @if (signInManager.Context.User.Claims.Where(c => c.Type == "gruppe").FirstOrDefault().Value != "3")
 {
-	<table class="table">
-		<thead>
-			<tr>
-				<td>
-					Dato
-				</td>
-				<td>
-					Er tiden taget
-				</td>
-				<td>
-					Læge/sygepjeleske
-				</td>
-				<td>
-					
-				</td>
-				<td>
-					
-				</td>
-			</tr>
-		</thead>
-		<tbody>
-			@foreach (var available in availables)
-			{
-				<tr>
-					<td>
-						@available.Date
-					</td>
-					@if (available.IsTaken == true)
-					{
-						<td>
-							Ja
-						</td>
-					}
-					else
-					{
-						<td>
-							Nej
-						</td>
-					}
-
-					<td>
-						@if (Employees != null || Employees.Count() != 0)
-						{
-							<p>@Employees.Where(e => e.Id == available.EmployeeId).FirstOrDefault().Firstname @Employees.Where(e => e.Id == available.EmployeeId).FirstOrDefault().Lastname</p> 
-						}
-
-					</td>
-					<td>
-						<a class="btn btn-info" href="/editavailable/@available.AvailableId">
-							<i class="bi bi-pencil-square"></i>
-						</a>
-					</td>
-					<td>
-						<button class="btn btn-danger" @onclick="() => deleteOnClick(available.AvailableId)">
-							<i class="bi bi-trash"></i>
-						</button>
-					</td>
-				</tr>
-			}
-		</tbody>
-
-	</table>
+	<div class="d-flex justify-content-center">
+		<div class="col-9 form-group">
+			<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+						Data="@availables" TItem="Available" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+				<Columns>
+					<RadzenDataGridColumn TItem="Available" Property="Date" Filterable="false" Title="Dato" Width="100px" TextAlign="TextAlign.Center" />
+					<RadzenDataGridColumn TItem="Available" Property="IsTaken" Title="Er tiden taget" Width="70px">
+						<Template Context="data">
+							@if (data.IsTaken == true)
+							{
+								<p>Ja</p>
+							}
+							else
+							{
+								<p>Nej</p>
+							}
+						</Template>
+					</RadzenDataGridColumn>
+					<RadzenDataGridColumn TItem="Available" Property="FirstName" Title="Læge/sygeplejeske" Width="140px">
+						<Template Context="data">
+							<p>@Employees.Where(e => e.Id == data.EmployeeId).FirstOrDefault().Firstname @Employees.Where(e => e.Id == data.EmployeeId).FirstOrDefault().Lastname</p>
+						</Template>
+					</RadzenDataGridColumn>
+					<RadzenDataGridColumn TItem="Available" Sortable="false" Filterable="false" Property="AvailableId" Title="Rediger" Width="100px">
+						<Template Context="data">
+							<a class="btn btn-info" href="/editavailable/@data.AvailableId">
+								<i class="bi bi-pencil-square"></i>
+							</a>
+						</Template>
+					</RadzenDataGridColumn>
+					<RadzenDataGridColumn TItem="Available" Sortable="false" Filterable="false" Property="AvailableId" Title="Slet" Width="100px">
+						<Template Context="data">
+							<button class="btn btn-danger" @onclick="() => deleteOnClick(data.AvailableId)">
+								<i class="bi bi-trash"></i>
+							</button>
+						</Template>
+					</RadzenDataGridColumn>
+				</Columns>
+			</RadzenDataGrid>
+		</div>
+	</div>
 }
 
 @code {
@@ -76,7 +55,9 @@
 
 	protected override void OnInitialized()
 	{
-		availables = _availableRepo.GetAllAvailables().ToList();
+		DateTime today = DateTime.UtcNow;
+		availables = _availableRepo.GetAllAvailables().Where(a => a.Date.Date >= today.Date).ToList();
+
 		List<ApplicationUser> applicationUsers = userManager.Users.ToList();
 
 		Employees.AddRange(applicationUsers.Where(e => e.Role != 3));
@@ -91,8 +72,8 @@
 		{
 			await _availableRepo.DeleteAvailable(availableId);
 			toastService.ShowSuccess("Tiden blev fjernet");
-			availables = _availableRepo.GetAllAvailables().ToList();
-			//NavigationManager.NavigateTo("/");
+			DateTime today = DateTime.UtcNow;
+			availables = _availableRepo.GetAllAvailables().Where(a => a.Date.Date >= today.Date).ToList();
 		}
 	}
 

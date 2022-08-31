@@ -1,63 +1,54 @@
 ﻿@page "/viewhospitalizations"
 @inject UserManager<ApplicationUser> userManager
-<h2 class="align-content-center">Oversigt over antal indlagte per hospital</h2>
-<select @onchange="GetHospitalizations" class="form-control" required>
-	<option value="">Vælg Hospital</option>
-	@foreach (var hospital in hospitals)
-	{
-		<option value="@hospital.Id">@hospital.Name</option>
-	}
-</select>
-@if (Hospitalizations.Count != 0)
-{
-	<table class="table">
-		<thead>
-			<tr>
-				<td>
-					Dato
-				</td>
-				<td>
-					Patient navn
-				</td>
-				<td>
-					Ledige senge @availableBed
-				</td>
-				<td>
-					
-				</td>
-			</tr>
-		</thead>
-		<tbody>
-			@foreach (var item in Hospitalizations)
+
+<div class="d-flex justify-content-center">
+	<div class="col-9 form-group">
+		<h2 class="align-content-center">Oversigt over antal indlagte per hospital</h2>
+		<select @onchange="GetHospitalizations" class="form-control" required>
+			<option value="">Vælg Hospital</option>
+			@foreach (var hospital in hospitals)
 			{
-				<tr>
-					<td>
-						@item.TimeOfHospitalized
-					</td>
-					<td>
-						@if (Patients != null)
-						{
-							<p>@Patients.FirstOrDefault(p => p.Id == item.PatientId).Firstname @Patients.FirstOrDefault(p => p.Id == item.PatientId).Lastname</p>
-
-						}
-					</td>
-					<td>
-						Indlagt 
-					</td>
-					<td>
-						<td>
-						<a class="btn btn-info" href="/edithospitalization/@item.HospitalizationID">
-							<i class="bi bi-pencil-square"></i>
-						</a>
-					</td>
-					</td>
-				</tr>
+				<option value="@hospital.Id">@hospital.Name</option>
 			}
-		</tbody>
-
-	</table>
-}
-
+		</select>
+		@if (Hospitalizations.Count != 0)
+		{
+			<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="10" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+						Data="@Hospitalizations" TItem="Hospitalization" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+				<Columns>
+					<RadzenDataGridColumn TItem="Hospitalization" Property="TimeOfHospitalized" Filterable="false" Title="Dato" Width="100px" TextAlign="TextAlign.Center" />
+					<RadzenDataGridColumn TItem="Hospitalization" Property="PatientId" Title="Patient navn" Width="140px">
+						<Template Context="data">
+							<p>@Patients.FirstOrDefault(p => p.Id == data.PatientId).Firstname @Patients.FirstOrDefault(p => p.Id == data.PatientId).Lastname</p>
+						</Template>
+					</RadzenDataGridColumn>
+					<RadzenDataGridColumn TItem="Hospitalization" Property="IsDischarged" Title="Antal indlagt" Width="140px">
+						<Template Context="data">
+							<p>Indlagt</p>
+						</Template>
+						<FooterTemplate>
+							@availableBed
+						</FooterTemplate>
+					</RadzenDataGridColumn>
+					<RadzenDataGridColumn TItem="Hospitalization" Sortable="false" Filterable="false" Property="HospitalizationID" Title="Rediger" Width="100px">
+						<Template Context="data">
+							<a class="btn btn-info" href="/edithospitalization/@data.HospitalizationID">
+								<i class="bi bi-pencil-square"></i>
+							</a>
+						</Template>
+					</RadzenDataGridColumn>
+					<RadzenDataGridColumn TItem="Hospitalization" Sortable="false" Filterable="false" Property="HospitalizationID" Title="Slet" Width="100px">
+						<Template Context="data">
+							<button class="btn btn-danger" @onclick="() => deleteOnClick(data.HospitalizationID)">
+								<i class="bi bi-trash"></i>
+							</button>
+						</Template>
+					</RadzenDataGridColumn>
+				</Columns>
+			</RadzenDataGrid>
+		}
+	</div>
+</div>
 @code {
 
 	List<Hospitalization> Hospitalizations = new List<Hospitalization>();
@@ -82,5 +73,17 @@
 		Hospitalizations = _hospitalizedRepo.GetHospitalizationsByHospitalId(hospital.Id).Where(h => (h.IsDischarged == false) && (h.TimeOfHospitalized.Date <= DateTime.Now.Date)).OrderBy(h => h.TimeOfHospitalized).ToList();
 
 		availableBed = (int)hospital.Beds - Hospitalizations.Count();
+	}
+
+	public async Task deleteOnClick(int hospitalizationID)
+	{
+		bool res = await Jsruntime.InvokeAsync<bool>
+		("confirm", $"Er du sikker på at du vil slette denne indlæggelse?");
+		if (res)
+		{
+			await _hospitalizedRepo.DeleteHospitalization(hospitalizationID);
+			toastService.ShowSuccess("Indlæggelsen er blevet fjernet");
+			Hospitalizations = _hospitalizedRepo.GetHospitalizationsByHospitalId(hospital.Id).Where(h => (h.IsDischarged == false) && (h.TimeOfHospitalized.Date <= DateTime.Now.Date)).OrderBy(h => h.TimeOfHospitalized).ToList();
+		}
 	}
 }

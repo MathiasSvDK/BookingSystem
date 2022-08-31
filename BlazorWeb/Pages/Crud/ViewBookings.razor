@@ -5,66 +5,45 @@
 
 @if (signInManager.Context.User.Claims.Where(c => c.Type == "gruppe").FirstOrDefault().Value != "3")
 {
-	<table class="table">
-		<thead>
-			<tr>
-				<td>
-					Behandling
-				</td>
-				<td>
-					Begrundelse
-				</td>
-				<td>
-					Tid
-				</td>
-				<td>
-					Godkend tiden
-				</td>
-				<td>
-				</td>
-				<td>
-				</td>
-			</tr>
-		</thead>
-		<tbody>
-			@foreach (var booking in bookings)
-			{
-				<tr>
-					<td>
-						@booking.Treatment.TreatmentName
-					</td>
-					<td>
-						@booking.Reason
-					</td>
-					<td>
-						@booking.Available.Date
-					</td>
-					<td>
-						@if (booking.IsApproved == true)
+	<div class="d-flex justify-content-center">
+		<div class="col-9 form-group">
+			<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+						Data="@bookings" TItem="Booking" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+				<Columns>
+					<RadzenDataGridColumn TItem="Booking" Property="Treatment.TreatmentName" Filterable="false" Title="Behandling" Width="100px" TextAlign="TextAlign.Center" />
+					<RadzenDataGridColumn TItem="Booking" Property="Reason" Title="Begrundelse" Width="140px"/>
+					<RadzenDataGridColumn TItem="Booking" Property="Available.Date" Title="Tid" Width="100px">
+					</RadzenDataGridColumn>
+					<RadzenDataGridColumn TItem="Booking" Property="IsApproved" Title="Godkend tiden" Width="140px">
+						<Template Context="data">
+							@if (data.IsApproved == true)
 						{
-							<input checked @bind-value="booking.IsApproved" @onclick="() => UpdatdeBookingIsApproved(booking, true)" type="checkbox" />
+							<input checked @bind-value="data.IsApproved" @onclick="() => UpdatdeBookingIsApproved(data, true)" type="checkbox" />
 						}
 						else
 						{
-							<input @bind-value="booking.IsApproved" @onclick="() => UpdatdeBookingIsApproved(booking, false)" type="checkbox" />
+							<input @bind-value="data.IsApproved" @onclick="() => UpdatdeBookingIsApproved(data, false)" type="checkbox" />
 						}
-
-					</td>
-					<td>
-						<a class="btn btn-info" href="/editbooking/@booking.BookingId">
+						</Template>
+					</RadzenDataGridColumn>
+					<RadzenDataGridColumn TItem="Booking" Sortable="false" Filterable="false" Property="BookingId" Title="Rediger" Width="100px">
+						<Template Context="data">
+							<a class="btn btn-info" href="/editbooking/@data.BookingId">
 							<i class="bi bi-pencil-square"></i>
 						</a>
-					</td>
-					<td>
-						<button class="btn btn-danger" @onclick="() => deleteOnClick(booking.BookingId)">
-							<i class="bi bi-trash"></i>
-						</button>
-					</td>
-				</tr>
-			}
-		</tbody>
-
-	</table>
+						</Template>
+					</RadzenDataGridColumn>
+					<RadzenDataGridColumn TItem="Booking" Sortable="false" Filterable="false" Property="BookingId" Title="Slet" Width="100px">
+						<Template Context="data">
+							<button class="btn btn-danger" @onclick="() => deleteOnClick(data.BookingId)">
+								<i class="bi bi-trash"></i>
+							</button>
+						</Template>
+					</RadzenDataGridColumn>
+				</Columns>
+			</RadzenDataGrid>
+		</div>
+	</div>
 }
 
 @code {
@@ -89,7 +68,7 @@
 			await _bookingRepo.SendEmailAsync("amalie2410@gmail.com", $"Booking af undersøgelse er godkendt", "", $"<html><body><H3>{patients.FirstOrDefault(p => p.Id == booking.PatientId).Firstname} {patients.FirstOrDefault(p => p.Id == booking.PatientId).Lastname}</H3><h3>{patients.FirstOrDefault(p => p.Id == booking.PatientId).Address}</h3><h1>Indkaldelse til undersøglese</h1><p>Du er blev indkaldt til en undersøgelse den {booking.Available.Date}</p><p>Hvis du ikke kan komme bedes du afmelde 24 timer inden.</p></body></html>");
 		}
 		await _bookingRepo.UpdateBooking(booking);
-		bookings = _bookingRepo.GetAllBookings().ToList();
+		bookings = _bookingRepo.GetAllBookings().Where(b => b.Available.Date.Date >= DateTime.Now.Date).OrderBy(b => b.Available.Date).ToList();
 	}
 
 	public async Task deleteOnClick(int bookingId)
@@ -100,7 +79,7 @@
 		{
 			await _bookingRepo.DeleteBooking(bookingId);
 			toastService.ShowSuccess("Booking blev fjernet");
-			bookings = _bookingRepo.GetAllBookings().ToList();
+			bookings = _bookingRepo.GetAllBookings().Where(b => b.Available.Date.Date >= DateTime.Now.Date).OrderBy(b => b.Available.Date).ToList();
 		}
 	}
 }
