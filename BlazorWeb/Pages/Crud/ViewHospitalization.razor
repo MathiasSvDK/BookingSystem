@@ -13,7 +13,7 @@
 		</select>
 		@if (Hospitalizations.Count != 0)
 		{
-			<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="10" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+			<RadzenDataGrid AllowFiltering="false" AllowColumnResize="true" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="10" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
 						Data="@Hospitalizations" TItem="Hospitalization" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
 				<Columns>
 					<RadzenDataGridColumn TItem="Hospitalization" Property="TimeOfHospitalized" Filterable="false" Title="Dato" Width="100px" TextAlign="TextAlign.Center" />
@@ -69,11 +69,15 @@
 
 	private async void GetHospitalizations(ChangeEventArgs e)
 	{
-		hospital = hospitals.FirstOrDefault(h => h.Id == Convert.ToInt32(e.Value));
-		Hospitalizations = _hospitalizedRepo.GetHospitalizationsByHospitalId(hospital.Id).Where(h => (h.IsDischarged == false) && (h.TimeOfHospitalized.Date <= DateTime.Now.Date)).OrderBy(h => h.TimeOfHospitalized).ToList();
+		if (e.Value != "" && e.Value != null)
+		{
+			hospital = hospitals.FirstOrDefault(h => h.Id == Convert.ToInt32(e.Value));
+			Hospitalizations = _hospitalizedRepo.GetHospitalizationsByHospitalId(hospital.Id).Where(h => (h.IsDischarged == false) && (h.TimeOfHospitalized.Date <= DateTime.Now.Date)).OrderBy(h => h.TimeOfHospitalized).ToList();
 
-		availableBed = (int)hospital.Beds - Hospitalizations.Count();
+			availableBed = (int)hospital.Beds - Hospitalizations.Count();
+		}
 	}
+
 
 	public async Task deleteOnClick(int hospitalizationID)
 	{

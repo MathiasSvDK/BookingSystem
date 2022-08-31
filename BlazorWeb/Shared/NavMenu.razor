@@ -34,6 +34,11 @@
 					@if (User.Role != 3)
 					{
 						<div class="nav-item">
+							<NavLink class="nav-link" href="createhospitalization">
+								<span class="bi bi-calendar-plus-fill" aria-hidden="true"></span> Booke indlæggelser
+							</NavLink>
+						</div>
+						<div class="nav-item">
 							<NavLink class="nav-link" href="createavailable">
 								<span class="bi bi-clipboard2-plus-fill" aria-hidden="true"></span> Opret en tid
 							</NavLink>
@@ -44,20 +49,16 @@
 							</NavLink>
 						</div>
 						<div class="nav-item">
-							<NavLink class="nav-link" href="createhospitalization">
-								<span class="bi bi-calendar-plus-fill" aria-hidden="true"></span> Booke indlæggelser
-							</NavLink>
-						</div>
-						<div class="nav-item">
-							<NavLink class="nav-link" href="viewhospitalizations">
-								<span class="bi bi-card-list" aria-hidden="true"></span> Se indlæggelse
-							</NavLink>
-						</div>
-						<div class="nav-item">
 							<NavLink class="nav-link" href="viewbookings">
 								<span class="bi bi-card-list" aria-hidden="true"></span> Se bookede undersøgelser
 							</NavLink>
 						</div>
+						<div class="nav-item">
+							<NavLink class="nav-link" href="viewhospitalizations">
+								<span class="bi bi-card-list" aria-hidden="true"></span> Se indlæggelser
+							</NavLink>
+						</div>
+
 						<div class="nav-item">
 							<NavLink class="nav-link" href="viewavailables">
 								<span class="bi bi-card-list" aria-hidden="true"></span> Se alle tider
