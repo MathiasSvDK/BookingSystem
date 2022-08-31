@@ -19,7 +19,7 @@
 				<ValidationMessage For="@(() => booking.PatientId)" />
 				<label class="control-label">Patient</label>
 				<div class="input-group">
-					<input required placeholder="Indtast cpr nummer" @bind="patient.UserName" class="form-control">
+					<input @onfocusout="GetPatient" required placeholder="Indtast cpr nummer" @bind="patient.UserName" class="form-control">
 					<div class="input-group-append">
 						<button type="button" @onclick="GetPatient" class="btn btn-outline-secondary">
 							<i class="bi bi-search"></i>
@@ -70,9 +70,9 @@
 				}
 			</select>
 
+			<ValidationMessage For="@(() => booking.AvailableId)" />
 			@if (availables.Count != 0)
 			{
-				<ValidationMessage For="@(() => booking.AvailableId)" />
 				<label class="control-label">Tid</label>
 				<select class="form-control" required @bind="booking.AvailableId">
 					<option value="">Vælg en Tid</option>
@@ -143,13 +143,20 @@
 
 	public async Task HandleValidSubmit()
 	{
-		Available available = availables.Where(a => a.AvailableId == booking.AvailableId).FirstOrDefault();
-		available.IsTaken = true;
-		await _availableRepo.UpdateAvailable(available);
 
-		await _bookingRepo.CreateBooking(booking);
-		StateHasChanged();
-		toastService.ShowSuccess("Booking blev oprettet");
-		NavigationManager.NavigateTo("/");
+		Available available = availables.Where(a => a.AvailableId == booking.AvailableId).FirstOrDefault();
+		if (available != null)
+		{
+			available.IsTaken = true;
+			await _availableRepo.UpdateAvailable(available);
+			await _bookingRepo.CreateBooking(booking);
+			StateHasChanged();
+			toastService.ShowSuccess("Booking blev oprettet");
+			NavigationManager.NavigateTo("/");
+		}
+		else
+		{
+			toastService.ShowError("Du bede venligst vægle en tid");
+		}
 	}
 }

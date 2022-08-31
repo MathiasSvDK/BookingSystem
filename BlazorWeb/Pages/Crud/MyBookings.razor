@@ -6,7 +6,7 @@
 
 @if (bookings.Count() != 0)
 {
-	<table class="table">
+@*	<table class="table">
 		<thead>
 			<tr>
 				<td>
@@ -58,7 +58,40 @@
 			}
 		</tbody>
 
-	</table>
+	</table>*@
+
+	<div class="d-flex justify-content-center">
+		<div class="col-9 form-group">
+			<RadzenDataGrid AllowFiltering="false" AllowColumnResize="true" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="10" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+						Data="@bookings" TItem="Booking" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+				<Columns>
+					<RadzenDataGridColumn TItem="Booking" Property="Treatment.TreatmentName" Filterable="false" Title="Behandling" Width="100px" TextAlign="TextAlign.Center" />
+					<RadzenDataGridColumn TItem="Booking" Property="Reason" Title="Begrundelse" Width="140px" />
+					<RadzenDataGridColumn TItem="Booking" Property="Available.Date" Title="Tid" Width="100px">
+					</RadzenDataGridColumn>
+					<RadzenDataGridColumn TItem="Booking" Property="IsApproved" Title="Godkend tiden" Width="140px">
+						<Template Context="data">
+							@if (data.IsApproved == true)
+							{
+								<input type="checkbox" checked disabled />
+							}
+							else
+							{
+								<input type="checkbox" disabled />
+							}
+						</Template>
+					</RadzenDataGridColumn>
+					<RadzenDataGridColumn TItem="Booking" Sortable="false" Filterable="false" Property="BookingId" Title="Rediger" Width="100px">
+						<Template Context="data">
+							<a class="btn btn-info" href="/editbooking/@data.BookingId">
+								<i class="bi bi-pencil-square"></i>
+							</a>
+						</Template>
+					</RadzenDataGridColumn>
+				</Columns>
+			</RadzenDataGrid>
+		</div>
+	</div>
 }
 
 

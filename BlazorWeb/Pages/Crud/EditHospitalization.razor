@@ -17,7 +17,7 @@
 				<ValidationMessage For="@(() => hospitalization.PatientId)" />
 				<label class="control-label">Patient</label>
 				<div class="input-group">
-					<input required placeholder="Indtast cpr nummer" @bind="patient.UserName" class="form-control">
+					<input @onfocusout="GetPatient" required placeholder="Indtast cpr nummer" @bind="patient.UserName" class="form-control">
 					<div class="input-group-append">
 						<button type="button" @onclick="GetPatient" class="btn btn-outline-secondary">
 							<i class="bi bi-search"></i>
@@ -41,7 +41,6 @@
 				<ValidationMessage For="@(() => hospitalization.HospitalId)" />
 				<label class="control-label">Hospital</label>
 				<select class="form-control" required @bind=" hospitalization.HospitalId">
-					<option value="">Vælg Hospital</option>
 					@if (hospitals == null)
 					{
 						<option>Loading..</option>

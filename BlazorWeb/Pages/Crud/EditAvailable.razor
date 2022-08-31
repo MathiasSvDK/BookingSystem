@@ -20,7 +20,6 @@
 				<ValidationMessage For="@(() => available.EmployeeId)" />
 				<label class="control-label">Tid</label>
 				<select class="form-control" required @bind="available.EmployeeId">
-					<option value="">Vælg en Læge/sygepjeleske</option>
 					@if (Employees == null)
 					{
 						<option>Loading..</option>

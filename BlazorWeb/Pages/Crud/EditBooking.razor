@@ -24,7 +24,7 @@
 						<ValidationMessage For="@(() => booking.PatientId)" />
 						<label class="control-label">Patient</label>
 						<div class="input-group">
-							<input required placeholder="Indtast cpr nummer" @bind="patient.UserName" class="form-control">
+							<input @onfocusout="GetPatient" required placeholder="Indtast cpr nummer" @bind="patient.UserName" class="form-control">
 							<div class="input-group-append">
 								<button type="button" @onclick="GetPatient" class="btn btn-outline-secondary">
 									<i class="bi bi-search"></i>
@@ -41,7 +41,6 @@
 					<label class="control-label">Behandling</label>
 
 					<select class="form-control" required @bind="booking.TreatmentId">
-						<option value="">Vælg Behandling</option>
 						@if (treatments == null)
 						{
 							<option>Loading..</option>
@@ -81,7 +80,6 @@
 						<ValidationMessage For="@(() => booking.AvailableId)" />
 						<label class="control-label">Tid</label>
 						<select class="form-control" required @bind="booking.AvailableId">
-							<option value="">Vælg en Tid</option>
 							@foreach (var available in availables)
 							{
 								<option value="@available.AvailableId">@available.Date</option>
@@ -176,8 +174,6 @@
 	{
 		Available available = availables.Where(a => a.AvailableId == booking.AvailableId).FirstOrDefault();
 		Treatment treatment = treatments.Where(t => t.TreatmentId == booking.TreatmentId).FirstOrDefault();
-
-
 
 		if (oldAvailable.AvailableId != available.AvailableId)
 		{
