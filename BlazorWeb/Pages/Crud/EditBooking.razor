@@ -116,7 +116,7 @@
 	private List<ApplicationUser> Employees = new List<ApplicationUser>();
 	private ApplicationUser Employee = new ApplicationUser();
 	private ApplicationUser patient = new ApplicationUser();
-
+	private DateTime today = DateTime.UtcNow;
 	protected override async Task OnInitializedAsync()
 	{
 		User = await userManager.FindByNameAsync(signInManager.Context.User.Identity.Name);
@@ -127,7 +127,7 @@
 		patient = await userManager.FindByIdAsync(booking.PatientId);
 
 		availables.Add(oldAvailable);
-		availables.AddRange(_availableRepo.GetAllAvailablesNotTaken().Where(a => a.EmployeeId == Employee.Id).ToList());
+		availables.AddRange(_availableRepo.GetAllAvailablesNotTaken().Where(a => a.EmployeeId == Employee.Id && (a.Date.Date >= today.Date)).ToList());
 		treatments = _treatmentRepo.GetAllTreatments().ToList();
 
 		List<ApplicationUser> applicationUsers = userManager.Users.ToList();
@@ -138,16 +138,17 @@
 
 	private void GetAvailable(ChangeEventArgs e)
 	{
+
 		if (e.Value.ToString() == Employee.Id)
 		{
 			availables.Clear();
 			booking.AvailableId = oldAvailable.AvailableId;
 			availables.Add(oldAvailable);
-			availables.AddRange(_availableRepo.GetAllAvailablesNotTaken().Where(a => a.EmployeeId == Employee.Id).ToList());
+			availables.AddRange(_availableRepo.GetAllAvailablesNotTaken().Where(a => a.EmployeeId == Employee.Id && (a.Date.Date >= today.Date)).ToList());
 		}
 		else
 		{
-			availables = _availableRepo.GetAllAvailablesNotTaken().Where(a => a.EmployeeId == e.Value.ToString()).ToList();
+			availables = _availableRepo.GetAllAvailablesNotTaken().Where(a => a.EmployeeId == e.Value.ToString() && (a.Date.Date >= today.Date)).ToList();
 			if (availables.Count != 0)
 			{
 				booking.AvailableId = availables.FirstOrDefault().AvailableId;
@@ -181,7 +182,10 @@
 			await _availableRepo.UpdateAvailable(oldAvailable);
 			available.IsTaken = true;
 			await _availableRepo.UpdateAvailable(available);
-
+			if (booking.IsApproved == true)
+			{
+				await _bookingRepo.SendEmailAsync("amalie2410@gmail.com", $"Tiden af din undersøgelse er blevet ændret", "", $"<html><body><H3><H3>{patient.Firstname} {patient.Lastname}</H3><h3>{patient.Address}</h3><h1>Tiden til din undersøglesen er blevet ændret</h1><p>din tid til en undersøgelse er blevet ryket til den {booking.Available.Date}</p><p>Hvis du ikke kan komme bedes du afmelde 24 timer inden.</p></body></html>");
+			}
 			booking.Available = available;
 		}
 
@@ -190,7 +194,9 @@
 			booking.Treatment = treatment;
 		}
 
+
 		await _bookingRepo.UpdateBooking(booking);
+
 		StateHasChanged();
 		toastService.ShowSuccess("Booking blev ændret");
 		NavigationManager.NavigateTo("/");
