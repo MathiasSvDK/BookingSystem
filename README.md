@@ -8,7 +8,7 @@
       <a href="#om-projektet">Om projektet</a>
     </li>
     <li><a href="#booking-api-controller">Api controller</a></li>
-    <li><a href="#mail-sender">Automatisering</a></li>
+    <li><a href="#mail-sender">Mail sender</a></li>
   </ol>
 </details>
 
