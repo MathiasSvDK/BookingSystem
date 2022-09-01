@@ -43,3 +43,9 @@ Updates the booking
 - DeleteBooking()
 
 Deletes the booking
+
+## Mail sender
+The SendEmailAsync can get found in BookingRepository, it uses SendGrids api to send a mail.
+The apikey and mail that it sends from can be found in appsetteing.json
+it is used in viewbookings and editbooking.razor
+
