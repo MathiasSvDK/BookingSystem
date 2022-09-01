@@ -184,7 +184,7 @@
 			await _availableRepo.UpdateAvailable(available);
 			if (booking.IsApproved == true)
 			{
-				await _bookingRepo.SendEmailAsync("amalie2410@gmail.com", $"Tiden af din undersøgelse er blevet ændret", "", $"<html><body><H3><H3>{patient.Firstname} {patient.Lastname}</H3><h3>{patient.Address}</h3><h1>Tiden til din undersøglesen er blevet ændret</h1><p>din tid til en undersøgelse er blevet ryket til den {booking.Available.Date}</p><p>Hvis du ikke kan komme bedes du afmelde 24 timer inden.</p></body></html>");
+				await _bookingRepo.SendEmailAsync(patient.Email, $"Tiden af din undersøgelse er blevet ændret", "", $"<html><body><H3><H3>{patient.Firstname} {patient.Lastname}</H3><h3>{patient.Address}</h3><h1>Tiden til din undersøglesen er blevet ændret</h1><p>din tid til en undersøgelse er blevet ryket til den {booking.Available.Date}</p><p>Hvis du ikke kan komme bedes du afmelde 24 timer inden.</p></body></html>");
 			}
 			booking.Available = available;
 		}
