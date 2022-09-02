@@ -14,7 +14,7 @@
 
  
 ## Om projektet
-Dette er et projekt er lavet til svendeprøven udfra den case vi har fået udlevert. Projeket håndterer kun booking af undersøgelser og indlæggelser af patienter.
+Dette er et projekt er lavet til svendeprøven udfra den case vi har fået udleveret. Projeket håndterer kun booking af undersøgelser og indlæggelser af patienter.
 
 ## Er-diagram
  ![ErDiagramForBookingSystem](https://user-images.githubusercontent.com/53754722/187873072-2f77d7da-125b-4d2c-afdd-490b9f91cc74.png)
