@@ -111,7 +111,8 @@ namespace Servicelayer.Repositories
 
 		public async Task SendEmailAsync(string email, string subject, string plainTextContent, string htmlMessage)
 		{
-			var client = new SendGridClient(_config["Data:ApiKey"]);
+			var apiKey = Environment.GetEnvironmentVariable("SENDGRID_API_KEY");
+			var client = new SendGridClient(apiKey);
 			var from = new EmailAddress(_config["Data:Mail"]);
 
 			var to = new EmailAddress(email);
