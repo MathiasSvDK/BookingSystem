@@ -69,5 +69,5 @@ Sletter booking af undersøgelsen permanent.
 ## Mail sender
 Mail senderen er konfigureret med SendGrid, hvor der bliver brugt deres api til at sende mails med.
 Metoden ligger på BookingRepository og bliver brugt i ViewBookings.razor og EditBooking.razor
-Apikey og mailadressen mailen bliver sendt fra kan man finde i appsettings.json
+Apikey er gemt som en secret og mailadressen mailen bliver sendt fra kan man finde i appsettings.json
 
