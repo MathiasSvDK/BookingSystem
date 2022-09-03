@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Servicelayer.Interfaces;
 
-namespace BlazorWeb.Controller
+namespace Api.Controller
 {
 	[Route("api/[controller]")]
 	[ApiController]
@@ -37,14 +37,14 @@ namespace BlazorWeb.Controller
 		[HttpGet]
 		public async Task<ICollection<Booking>> GetAllBookings()
 		{
-			return _bookingRepo.GetAllBookings().ToList();
+			return _bookingRepo.GetAllBookings().Where(b => b.Available.Date.Date >= DateTime.Now.Date).OrderBy(b => b.Available.Date).ToList();
 		}
 
 		[Route("available")]
 		[HttpGet]
 		public async Task<ICollection<Available>> GetAllAvailables()
 		{
-			return _availableRepo.GetAllAvailables().ToList();
+			return _availableRepo.GetAllAvailables().Where(a => a.Date.Date >= DateTime.Now.Date).ToList();
 		}
 
 		[Route("availablenottaken")]

@@ -35,9 +35,9 @@
 @code {
 	private List<Treatment> treatments = new List<Treatment>();
 
-	protected override void OnInitialized()
+	protected override async Task OnInitializedAsync()
 	{
-		treatments = _treatmentRepo.GetAllTreatments().OrderBy(t => t.TreatmentName).ToList();
+		treatments = await _apiService.GetAsync<List<Treatment>>($"{_config["Data:booking"]}/treatment");
 	}
 
 	public async Task deleteOnClick(int treatmentId)
@@ -48,7 +48,7 @@
 		{
 			await _treatmentRepo.DeleteTreatment(treatmentId);
 			toastService.ShowSuccess("Behandlingen blev fjernet");
-			NavigationManager.NavigateTo("/viewtreatments");
+			await _apiService.GetAsync<List<Treatment>>($"{_config["Data:booking"]}/treatment");
 		}
 	}
 }

@@ -15,6 +15,8 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Datalayer.Entities;
 using BlazorWeb.Services;
 using System.Security.Claims;
+using Web.Service;
+using Web.Service.IdentityService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,7 +50,10 @@ builder.Services.AddScoped<ITreatmentRepository, TreatmentRepository>();
 builder.Services.AddScoped<IAvailableRepository, AvailableRepository>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<IHospitalizationRepository, HospitalizationRepository>();
-//builder.Services.AddScoped<Userservice>();
+
+builder.Services.AddScoped<IApiService, ApiService>();
+builder.Services.Configure<IdentityServerSettings>(builder.Configuration.GetSection("IdentityServerSettings"));
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -64,7 +69,6 @@ builder.Services.AddAuthentication(options =>
 		 options.SignOutScheme = OpenIdConnectDefaults.AuthenticationScheme;
 		 options.Authority = builder.Configuration["InteractiveServiceSettings:AuthorityUrl"];
 		 options.ClientId = builder.Configuration["InteractiveServiceSettings:ClientId"];
-		 options.ClientSecret = builder.Configuration["InteractiveServiceSettings:ClientSecret"];
 
 		 options.ResponseType = "code";
 		 options.SaveTokens = true;

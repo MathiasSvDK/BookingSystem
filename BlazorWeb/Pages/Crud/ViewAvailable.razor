@@ -53,10 +53,10 @@
 	private List<Available> availables = new List<Available>();
 	private List<ApplicationUser> Employees = new List<ApplicationUser>();
 
-	protected override void OnInitialized()
+	protected override async Task OnInitializedAsync()
 	{
 		DateTime today = DateTime.UtcNow;
-		availables = _availableRepo.GetAllAvailables().Where(a => a.Date.Date >= today.Date).ToList();
+		availables = await _apiService.GetAsync<List<Available>>($"{_config["Data:booking"]}/available");
 
 		List<ApplicationUser> applicationUsers = userManager.Users.ToList();
 
@@ -73,7 +73,8 @@
 			await _availableRepo.DeleteAvailable(availableId);
 			toastService.ShowSuccess("Tiden blev fjernet");
 			DateTime today = DateTime.UtcNow;
-			availables = _availableRepo.GetAllAvailables().Where(a => a.Date.Date >= today.Date).ToList();
+			availables = await _apiService.GetAsync<List<Available>>($"{_config["Data:booking"]}/available");
+
 		}
 	}
 

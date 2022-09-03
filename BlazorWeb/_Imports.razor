@@ -21,6 +21,8 @@
 @using System.Security.Claims
 @using Radzen
 @using Radzen.Blazor
+@using Web.Service
+@using Web.Service.IdentityService
 
 @inject IBookingRepository _bookingRepo
 @inject IAvailableRepository _availableRepo
@@ -30,6 +32,11 @@
 @inject IJSRuntime Jsruntime
 @inject IToastService toastService
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IApiService _apiService
+@inject IConfiguration _config
+@inject IJSRuntime Jsruntime
+@inject ITokenService TokenService
+
 
 
 

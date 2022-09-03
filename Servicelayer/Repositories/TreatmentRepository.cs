@@ -20,7 +20,7 @@ namespace Servicelayer.Repositories
 
 		public IQueryable<Treatment> GetAllTreatments()
 		{
-			return _bookingContext.Treatments.AsNoTracking();
+			return _bookingContext.Treatments.AsNoTracking().OrderBy(t => t.TreatmentName);
 		}
 
 		public async Task<Treatment> GetTreatmentsById(int treatmentId)
