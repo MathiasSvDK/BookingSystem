@@ -1,5 +1,6 @@
 ﻿using Datalayer;
 using Datalayer.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Servicelayer.Interfaces;
@@ -8,6 +9,7 @@ namespace Api.Controller
 {
 	[Route("api/[controller]")]
 	[ApiController]
+	[Authorize]
 	public class BookingController : ControllerBase
 	{
 		private readonly IBookingRepository _bookingRepo;
