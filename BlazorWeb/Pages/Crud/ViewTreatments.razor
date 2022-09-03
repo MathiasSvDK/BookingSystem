@@ -48,7 +48,7 @@
 		{
 			await _treatmentRepo.DeleteTreatment(treatmentId);
 			toastService.ShowSuccess("Behandlingen blev fjernet");
-			await _apiService.GetAsync<List<Treatment>>($"{_config["Data:booking"]}/treatment");
+			treatments = await _apiService.GetAsync<List<Treatment>>($"{_config["Data:booking"]}/treatment");
 		}
 	}
 }
